@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Complete Tasks</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <link rel="stylesheet" href="material/css/styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #000; 
+            color: #fff; 
+            margin: 0;
+            padding: 0;
+        }
+
+        #balance-container {
+            margin: 20px;
+            font-size: 18px;
+        }
+
+        .task-container {
+            margin: 10px auto;
+            max-width: 600px;
+        }
+
+        .task {
+            margin: 10px auto;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border: 1px solid #000000; 
+            border-radius: 12px;
+            background-color: #333030; 
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: transform 0.3s ease;
+            width: 80%;
+        }
+
+        .task:hover {
+            transform: translateY(-5px);
+        }
+
+        .task-detail {
+            display: flex;
+            align-items: center;
+        }
+
+        .task-image img {
+            border-radius: 8px;
+            margin-right: 10px;
+        }
+
+        .task h4 {
+            margin: 0;
+            font-size: 18px;
+            color: #f2f2f2;
+        }
+
+        .task-data {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+        }
+
+        .task-data img {
+            margin-right: 5px;
+        }
+
+        .task-data h5 {
+            margin: 0;
+            color: #ffcc00;
+            font-size: 18px;
+        }
+
+        .task-button {
+            background-color: #ffffff; 
+            color: rgb(0, 0, 0);
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: background-color 0.3s ease;
+        }
+
+        .task-button:hover {
+            background-color: #a2aaa0;
+        }
+
+        .tasks.scrollable {
+            max-height: 590px; 
+            overflow-y: auto; 
+            margin: 20px auto;
+            width: 90%;       
+            padding-right: 10px;
+            border: 1px solid #000000; 
+        }
+
+        @media (max-width: 600px) {
+            .task-container {
+                max-width: 100%;
+            }
+
+            .task-button {
+                padding: 10px 15px;
+                font-size: 14px;
+            }
+
+            .task h4 {
+                font-size: 16px;
+            }
+        }
+
+        .purchase-container {
+            background-color: #000;
+            border-radius: 30px;
+            padding: 20px;
+            width: 85%;
+            max-width: 400px;
+            margin: 20px auto;
+            box-shadow: 0 0 15px rgba(255, 255, 255, 0.3);
+        }
+
+        .purchase-title {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #fff;
+        }
+
+        .package-row {
+            display: flex;
+            align-items: center; /* تنظیم برای تراز عمودی */
+            justify-content: space-between; /* دکمه‌ها و ارقام در دو طرف قرار گیرند */
+            background-color: #202020;
+            border-radius: 15px;
+            padding: 10px;
+            margin: 10px 0;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .package-row:hover {
+            transform: scale(1.05);
+        }
+
+        .diamond-icon {
+            height: 20px;
+        }
+
+        .package-row img {
+            width: 25px;  /* تنظیم سایز لوگو */
+            margin-right: 10px;
+        }
+
+        .buy-btn {
+            background-color: #000;
+            color: #fff;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .buy-btn:hover {
+            background-color: #666;
+            transform: scale(1.1);
+        }
+
+        .payment-footer {
+            margin-top: 15px;
+            font-size: 14px;
+            color: #DAAD10;
+        }
+
+        /* تغییرات جدید برای ارقام */
+        .package-row span {
+            font-size: 20px; /* افزایش اندازه ارقام */
+            font-weight: 700; /* ضخیم‌تر کردن ارقام */
+            color: #F7CB1A; /* تغییر رنگ به زرد پررنگ */
+            margin-right: 20px; /* فاصله ارقام و دکمه */
+            flex-grow: 1; /* جلوگیری از کشیدگی فضای اضافی */
+            text-align: left; /* تراز چپ برای ارقام */
+        }
+
+        /* Toast styles */
+        #toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <div id="balance-container">
+        <h2><b>_____________</b></h2>
+        <h2><b> TASKS </b></h2>
+        <span id="balance">0</span> 💎 total Diamonium
+    </div>
+    <h2><b>_______________</b></h2>
+    
+    <div class="purchase-container">
+        <div class="purchase-title">SHOPPING PACKAGES</div>
+        
+        <div class="package-row">
+            <img src="material/images/logo.png" alt="Logo">
+            <span>10,000</span>
+            <button class="buy-btn" onclick="handlePayment(10000, 1)">1$</button>
+        </div>
+        
+        <div class="package-row">
+            <img src="material/images/logo.png" alt="Logo">
+            <span>80,000</span>
+            <button class="buy-btn" onclick="handlePayment(80000, 5)">5$</button>
+        </div>
+        
+        <div class="package-row">
+            <img src="material/images/logo.png" alt="Logo">
+            <span>200,000</span>
+            <button class="buy-btn" onclick="handlePayment(200000, 10)">10$</button>
+        </div>
+        
+        <div class="package-row">
+            <img src="material/images/logo.png" alt="Logo">
+            <span>1,000,000</span>
+            <button class="buy-btn" onclick="handlePayment(1000000, 50)">50$</button>
+        </div>
+        
+        <div class="package-row">
+            <img src="material/images/logo.png" alt="Logo">
+            <span>3,000,000</span>
+            <button class="buy-btn" onclick="handlePayment(3000000, 100)">100$</button>
+        </div>
+        
+        <div class="payment-footer">Payment with various digital currencies</div>
+    </div>
+    
+    <section class="tasks scrollable">
+        <!-- Task elements go here -->
+        	<div class="task-container">
+    <div class="task">
+        <div class="task-detail">
+            <div class="task-image">
+                <img src="material/images/Invite.png" width="45px" alt="">
+            </div>
+            <div>
+                <h4>Invite 3 friends</h4>
+                <div class="task-data">
+                    <img src="material/images/logo.png" width="20px" alt="Coin Icon">
+                    <h5>10,000</h5>
+                </div>
+            </div>
+        </div>
+        <button class="task-button" id="claimInvite3" onclick="completeTask(10000, 'invite3')" disabled>💎 claim</button>
+    </div>
+
+    <div class="task">
+        <div class="task-detail">
+            <div class="task-image">
+                <img src="material/images/Invite.png" width="45px" alt="">
+            </div>
+            <div>
+                <h4>Invite 5 friends</h4>
+                <div class="task-data">
+                    <img src="material/images/logo.png" width="20px" alt="Coin Icon">
+                    <h5>20,000</h5>
+                </div>
+            </div>
+        </div>
+        <button class="task-button" id="claimInvite5" onclick="completeTask(20000, 'invite5')" disabled>💎 claim</button>
+    </div>
+
+    <div class="task">
+        <div class="task-detail">
+            <div class="task-image">
+                <img src="material/images/Invite.png" width="45px" alt="">
+            </div>
+            <div>
+                <h4>Invite 10 frien..</h4>
+                <div class="task-data">
+                    <img src="material/images/logo.png" width="20px" alt="Coin Icon">
+                    <h5>70,000</h5>
+                </div>
+            </div>
+        </div>
+        <button class="task-button" id="claimInvite10" onclick="completeTask(70000, 'invite10')" disabled>💎 claim</button>
+    </div>
+
+    <div class="task">
+        <div class="task-detail">
+            <div class="task-image">
+                <img src="material/images/Invite.png" width="45px" alt="">
+            </div>
+            <div>
+                <h4>Invite 20 frien..</h4>
+                <div class="task-data">
+                    <img src="material/images/logo.png" width="20px" alt="Coin Icon">
+                    <h5>200,000</h5>
+                </div>
+            </div>
+        </div>
+        <button class="task-button" id="claimInvite20" onclick="completeTask(200000, 'invite20')" disabled>💎 claim</button>
+    </div>
+</div>
+
+        	<div class="task-container">
+        <div class="task">
+            <div class="task-detail">
+                <div class="task-image">
+                    <img src="material/images/you.gif" width="45px" alt="">
+                </div>
+                <div>
+                    <h4>Subscribe</h4>
+                    <div class="task-data">
+                        <img src="material/images/logo.png" width="20px" alt="Coin Icon">
+                        <h5>100</h5>
+                    </div>
+                </div>
+            </div>
+            <button class="task-button" onclick="completeTask(100, 'https://youtube.com/@daimoniumm?si=0XiFfn5ENMV063Bj')">💎 claim</button>
+        </div>
+    
+        <div class="task-container">
+            <div class="task">
+                <div class="task-detail">
+                    <div class="task-image">
+                        <img src="material/images/tele.png" width="45px" alt="">
+                    </div>
+                    <div>
+                        <h4>Subscribe</h4>
+                        <div class="task-data">
+                            <img src="material/images/logo.png" width="20px" alt="Coin Icon">
+                            <h5>100</h5>
+                        </div>
+                    </div>
+                </div>
+                <button class="task-button" onclick="completeTask(100, 'http://t.me/Daimonium_bot')">💎 claim</button>
+            </div>
+            
+                <div class="task-container">
+                    <div class="task">
+                        <div class="task-detail">
+                            <div class="task-image">
+                                <img src="material/images/ista.png" width="45px" alt="">
+                            </div>
+                            <div>
+                                <h4>follow</h4>
+                                <div class="task-data">
+                                    <img src="material/images/logo.png" width="20px" alt="Coin Icon">
+                                    <h5>100</h5>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="task-button" onclick="completeTask(100, 'https://www.instagram.com/daimoniumm?igsh=MXFmdTFucGxlaXlxOA==')">💎 claim</button>
+                    </div>
+    </section>
+
+
+___________________________________________________
+    <nav class="bottom-nav">
+        <a href="home.html" class="nav-item">
+            <i class="fas fa-home"></i>
+            <span>HOME</span>
+        </a>
+        <a href="leaderboard.html" class="nav-item">
+            <i class="fas fa-trophy"></i>
+            <span>LEADERBOARD</span>
+        </a>
+        <a href="invite-friends.html" class="nav-item">
+            <i class="fas fa-user-friends"></i>
+            <span>FRIENDS</span>
+        </a>
+        <a href="task.html" class="nav-item">
+            <i class="fas fa-tasks"></i>
+            <span>TASKS</span>
+        </a>
+        <a href="balance.html" class="nav-item">
+            <i class="fas fa-wallet"></i>
+            <span>BALANCE</span>
+        </a>
+    </nav>
+
+    <!-- Toast message -->
+    <div id="toast"></div>
+
+    <script src="material/js/js.js"></script>
+    <script src="material/js/main.js"></script>
+    <script src="material/js/Task.js"></script>
+
+    <script>
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.style.display = 'block';
+            setTimeout(() => {
+                toast.style.display = 'none';
+            }, 3000); // Show for 3 seconds
+        }
+    </script>
+</body><script src="material/js/Task.js"></script>
+</html>
