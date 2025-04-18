@@ -1,41 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Loading...</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Loading...</title>
 
-    <style>
-        body, html {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            width: 100%;
-            overflow: hidden;
-            background: black; /* پس‌زمینه مشکی */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
+  <!-- لینک به فایل‌های CSS -->
+  <link rel="stylesheet" href="material/css/font.css">
+  <link rel="stylesheet" href="material/css/st.css">
+  <link rel="stylesheet" href="material/css/styles.css">
+  <link rel="stylesheet" href="material/css/w.css">
 
-        .spinner {
-            border: 8px solid rgba(255, 255, 255, 0.1);
-            border-left: 8px solid #013AEB; /* آبی پررنگ */
-            border-radius: 50%;
-            width: 50px;
-            height: 50px;
-            animation: spin 1s linear infinite;
-        }
+  <style>
+    body, html {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      background: black;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
 
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    .spinner {
+      border: 8px solid rgba(255, 255, 255, 0.1);
+      border-left: 8px solid #013AEB;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+  <!-- اسکریپت ریدایرکت به home.html -->
+  <script>
+    setTimeout(function() {
+      window.location.href = 'home.html';
+    }, 2000);
+  </script>
 </head>
+
 <body>
 
-    <div class="spinner"></div>
+  <div class="spinner"></div>
+
+  <!-- لینک به فایل‌های JS -->
+  <script src="material/js/cojs.js"></script>
+  <script src="material/js/js.js"></script>
+  <script src="material/js/main.js"></script>
+  <script src="material/js/payment.js"></script>
+  <script src="material/js/Task.js"></script>
+  <script src="material/js/w.js"></script>
 
 </body>
+
 </html>
