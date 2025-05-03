@@ -1,57 +1,26 @@
-function handlePayment(coins, usdPrice) {
-    const userId = localStorage.getItem('userId');
-    const packageData = {
-        coins: coins,
-        usdPrice: usdPrice,
-        userId: userId
-    };
+// payment.js
+import { CONFIG } from './config.js';
 
-    // باز کردن ربات تلگرام با پارامتر پرداخت
-    const deeplink = `https://t.me/Daimonium_bot?start=pay_${btoa(JSON.stringify(packageData))}`;
-    window.open(deeplink, '_blank');
+export async function handlePayment(coins, usdPrice) {
+  // Fetch userId from server
+  const res = await fetch(`${CONFIG.API_BASE_URL}/user/id`);
+  const { userId } = await res.json();
 
-    // لیست WebSocket هاست‌های مختلف
-    const websocketHosts = [
-        'wss://ws-frankfurt.fly.dev/ws',
-        'wss://ws-milan.fly.dev/ws',
-        'wss://ws-amsterdam.fly.dev/ws'
-    ];
+  const packageData = { coins, usdPrice, userId };
+  const deeplink = `https://t.me/Daimonium_bot?start=pay_${btoa(JSON.stringify(packageData))}`;
+  window.open(deeplink, '_blank');
 
-    // انتخاب تصادفی یکی از هاست‌ها
-    const selectedHost = websocketHosts[Math.floor(Math.random() * websocketHosts.length)];
-
-    // اتصال به WebSocket با پارامتر userId
-    const ws = new WebSocket(`${selectedHost}?userId=${userId}`);
-
-    ws.onopen = () => {
-        console.log("WebSocket connected");
-
-        // ارسال درخواست پرداخت به WebSocket
-        ws.send(JSON.stringify({
-            type: "payment_request",
-            data: packageData
-        }));
-    };
-
-    ws.onmessage = (event) => {
-        const msg = JSON.parse(event.data);
-
-        if (msg.event === "payment_response") {
-            const data = msg.data;
-            if (data && data.newBalance !== undefined) {
-                document.getElementById('balance').innerText = data.newBalance;
-            }
-        } else if (msg.event === "payment_error") {
-            alert("خطا در پرداخت: " + msg.data.error);
-        }
-    };
-
-    ws.onerror = (err) => {
-        console.error("WebSocket Error:", err);
-        alert("اتصال WebSocket با مشکل مواجه شد.");
-    };
-
-    ws.onclose = () => {
-        console.log("WebSocket disconnected");
-    };
+  // Connect to WebSocket
+  const host = CONFIG.WS_HOSTS[Math.floor(Math.random() * CONFIG.WS_HOSTS.length)];
+  const ws = new WebSocket(`${host}?userId=${userId}`);
+  ws.onopen = () => ws.send(JSON.stringify({ type: 'payment_request', data: packageData }));
+  ws.onmessage = ({ data }) => {
+    const msg = JSON.parse(data);
+    if (msg.event === 'payment_response') {
+      document.getElementById('balance').innerText = msg.data.newBalance;
+    } else if (msg.event === 'payment_error') {
+      alert('خطا در پرداخت: ' + msg.data.error);
+    }
+  };
+  ws.onerror = () => alert('WebSocket Error');
 }
