@@ -1,85 +1,49 @@
-const body = document.body;
-const image = body.querySelector('#coin');
-const h1 = body.querySelector('h1');
+// main.js (coin clicker)
+import { CONFIG } from './config.js';
 
-let coins = localStorage.getItem('coins');
-let total = localStorage.getItem('total');
-let power = localStorage.getItem('power');
-let count = localStorage.getItem('count')
+document.addEventListener('DOMContentLoaded', () => {
+  const image = document.querySelector('#coin');
+  const label = document.querySelector('h1');
+  const totalEl = document.querySelector('#total');
+  const powerEl = document.querySelector('#power');
+  const progress = document.querySelector('.progress');
 
-if(coins == null){
-    localStorage.setItem('coins' , '0');
-    h1.textContent = '0';
-}else{
-    h1.textContent = Number(coins).toLocaleString();
-}
+  let state = { coins: 0, total: 500, power: 500, count: 1 };
 
-if(total == null){
-    localStorage.setItem('total' , '500')
-    body.querySelector('#total').textContent = '/500';
-}else {
-    body.querySelector('#total').textContent = `/${total}`;
-}
+  async function loadState() {
+    const res = await fetch(`${CONFIG.API_BASE_URL}/clicker/state`);
+    state = await res.json();
+    updateUI();
+  }
 
+  function updateUI() {
+    label.textContent = state.coins.toLocaleString();
+    totalEl.textContent = `/${state.total}`;
+    powerEl.textContent = state.power;
+    progress.style.width = `${(100 * state.power) / state.total}%`;
+  }
 
-if(power == null){
-    localStorage.setItem('power' , '500');
-    body.querySelector('#power').textContent = '500';
-}else{
-    body.querySelector('#power').textContent = power;
-}
+  image.addEventListener('click', async (e) => {
+    await fetch(`${CONFIG.API_BASE_URL}/clicker/click`, { method: 'POST' });
+    await loadState();
+    animateCoin(e.offsetX, e.offsetY, image);
+  });
 
+  setInterval(async () => {
+    await fetch(`${CONFIG.API_BASE_URL}/clicker/regenerate`, { method: 'POST' });
+    await loadState();
+  }, 1000);
 
-if(count == null){
-    localStorage.setItem('count' , '1')
-}
-
-image.addEventListener('click' , (e)=> {
-
-    let x = e.offsetX;
-    let y = e.offsetY;
-
-
+  function animateCoin(x, y, img) {
     navigator.vibrate(5);
+    let transform;
+    if (x < 150 && y < 150) transform = 'translate(-0.25rem,-0.25rem) skewY(-10deg) skewX(5deg)';
+    else if (x < 150) transform = 'translate(-0.25rem,0.25rem) skewY(-10deg) skewX(5deg)';
+    else if (y > 150) transform = 'translate(0.25rem,0.25rem) skewY(10deg) skewX(-5deg)';
+    else transform = 'translate(0.25rem,-0.25rem) skewY(10deg) skewX(-5deg)';
+    img.style.transform = transform;
+    setTimeout(() => img.style.transform = '', 100);
+  }
 
-    coins = localStorage.getItem('coins');
-    power = localStorage.getItem('power');
-    
-    if(Number(power) > 0){
-        localStorage.setItem('coins' , `${Number(coins) + 1}`);
-        h1.textContent = `${(Number(coins) + 1).toLocaleString()}`;
-    
-        localStorage.setItem('power' , `${Number(power) - 1}`);
-        body.querySelector('#power').textContent = `${Number(power) - 1}`;
-    } 
-
-    if(x < 150 & y < 150){
-        image.style.transform = 'translate(-0.25rem, -0.25rem) skewY(-10deg) skewX(5deg)';
-    }
-    else if (x < 150 & y > 150){
-        image.style.transform = 'translate(-0.25rem, 0.25rem) skewY(-10deg) skewX(5deg)';
-    }
-    else if (x > 150 & y > 150){
-        image.style.transform = 'translate(0.25rem, 0.25rem) skewY(10deg) skewX(-5deg)';
-    }
-    else if (x > 150 & y < 150){
-        image.style.transform = 'translate(0.25rem, -0.25rem) skewY(10deg) skewX(-5deg)';
-    }
-
-
-    setTimeout(()=>{
-        image.style.transform = 'translate(0px, 0px)';
-    }, 100);
-
-    body.querySelector('.progress').style.width = `${(100 * power) / total}%`;
+  loadState();
 });
-
-setInterval(()=> {
-    count = localStorage.getItem('count')
-    power = localStorage.getItem('power');
-    if(Number(total) > power){
-        localStorage.setItem('power' , `${Number(power) + Number(count)}`);
-        body.querySelector('#power').textContent = `${Number(power) + Number(count)}`;
-        body.querySelector('.progress').style.width = `${(100 * power) / total}%`;
-    }
-}, 1000);
