@@ -76,3 +76,6 @@ async function inviteFriend() {
 
 // Initialize on load
 init();
+
+window.completeTask = completeTask;
+window.inviteFriend = inviteFriend;
