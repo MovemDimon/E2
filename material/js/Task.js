@@ -1,91 +1,78 @@
-let balance = parseInt(localStorage.getItem('balance')) || 0;
-let invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
+// Task.js
+import { CONFIG } from './config.js';
 
-// تابع تکمیل تسک
-function completeTask(reward, taskName) {
-    if (localStorage.getItem(taskName) === 'true') {
-        alert('You have already completed this task.');
-        return;
-    }
+const TASK_REWARDS = {
+  invite3: 10000,
+  invite5: 20000,
+  invite10: 70000,
+  invite20: 200000
+};
 
-    // بررسی تعداد دعوت‌شده‌ها برای هر تسک
-    if (taskName === 'invite3' && invitedFriends >= 3) {
-        balance += 10000;
-        updateBalance();
-        localStorage.setItem(taskName, 'true');
-        localStorage.setItem('balance', balance);
-        alert("🎉 You have completed the task and received your reward!");
-    } else if (taskName === 'invite5' && invitedFriends >= 5) {
-        balance += 20000;
-        updateBalance();
-        localStorage.setItem(taskName, 'true');
-        localStorage.setItem('balance', balance);
-        alert("🎉 You have completed the task and received your reward!");
-    } else if (taskName === 'invite10' && invitedFriends >= 10) {
-        balance += 70000;
-        updateBalance();
-        localStorage.setItem(taskName, 'true');
-        localStorage.setItem('balance', balance);
-        alert("🎉 You have completed the task and received your reward!");
-    } else if (taskName === 'invite20' && invitedFriends >= 20) {
-        balance += 200000;
-        updateBalance();
-        localStorage.setItem(taskName, 'true');
-        localStorage.setItem('balance', balance);
-        alert("🎉 You have completed the task and received your reward!");
-    } else {
-        alert(`You need to invite more friends to complete this task. Current invites: ${invitedFriends}`);
-    }
+let balance = 0;
+let invitedFriends = 0;
+
+async function init() {
+  const res = await fetch(`${CONFIG.API_BASE_URL}/user/state`);
+  const data = await res.json();
+  balance = data.balance;
+  invitedFriends = data.invitedFriends;
+  updateDisplay();
 }
 
-// به‌روزرسانی موجودی
-function updateBalance() {
-    document.getElementById('balance').textContent = balance;
+// تابع تکمیل تسک بدون پارامتر reward
+async function completeTask(taskName) {
+  const reward = TASK_REWARDS[taskName];
+  if (!reward) {
+    alert('تسک نامعتبر است.');
+    return;
+  }
+  try {
+    const res = await fetch(`${CONFIG.API_BASE_URL}/task/complete`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ taskName })
+    });
+    const result = await res.json();
+    if (result.error) {
+      alert(result.error);
+      return;
+    }
+    balance = result.newBalance;
+    invitedFriends = result.invitedFriends;
+    updateDisplay();
+    alert(`🎉 تسک ${taskName} با موفقیت انجام شد و ${reward.toLocaleString()} کوین دریافت کردید!`);
+  } catch (err) {
+    console.error(err);
+    alert('خطا در برقراری ارتباط با سرور.');
+  }
 }
 
-// تابع برای اضافه کردن یک دعوت جدید
-function inviteFriend() {
-    invitedFriends++;
-    localStorage.setItem('invitedFriends', invitedFriends);
-    updateInviteTaskStatus();
+function updateDisplay() {
+  document.getElementById('balance').textContent = balance;
+  document.getElementById('inviteCount').textContent = invitedFriends;
+  updateInviteButtons();
 }
 
-// بررسی وضعیت تسک دعوت دوستان
-function updateInviteTaskStatus() {
-    let claimButton3 = document.getElementById('claimInvite3');
-    let claimButton5 = document.getElementById('claimInvite5');
-    let claimButton10 = document.getElementById('claimInvite10');
-    let claimButton20 = document.getElementById('claimInvite20');
-    
-    let inviteTaskStatus = document.getElementById('inviteTaskStatus');
-    
-    if (invitedFriends >= 3) {
-        claimButton3.disabled = false;
-        inviteTaskStatus.textContent = "✅ Invite 3 friends - Task Complete!";
-    } else {
-        claimButton3.disabled = true;
-        inviteTaskStatus.textContent = `Invite ${3 - invitedFriends} more friends to complete this task.`;
-    }
-
-    if (invitedFriends >= 5) {
-        claimButton5.disabled = false;
-    } else {
-        claimButton5.disabled = true;
-    }
-
-    if (invitedFriends >= 10) {
-        claimButton10.disabled = false;
-    } else {
-        claimButton10.disabled = true;
-    }
-
-    if (invitedFriends >= 20) {
-        claimButton20.disabled = false;
-    } else {
-        claimButton20.disabled = true;
-    }
+function updateInviteButtons() {
+  Object.entries(TASK_REWARDS).forEach(([key, _]) => {
+    const n = Number(key.replace('invite', ''));
+    const btn = document.getElementById(`claimInvite${n}`);
+    if (btn) btn.disabled = invitedFriends < n;
+  });
 }
 
-// مقداردهی اولیه هنگام لود صفحه
-updateBalance();
-updateInviteTaskStatus();
+async function inviteFriend() {
+  try {
+    const res = await fetch(`${CONFIG.API_BASE_URL}/invite`, { method: 'POST' });
+    const data = await res.json();
+    if (!data.error) {
+      invitedFriends = data.invitedFriends;
+      updateDisplay();
+    }
+  } catch (err) {
+    console.error(err);
+  }
+}
+
+// Initialize on load
+init();
