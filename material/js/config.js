@@ -1,10 +1,5 @@
-import fs from 'fs';
-
-// خواندن فایل config.json
-const config = JSON.parse(fs.readFileSync('config.json', 'utf8'));
-
-// صادر کردن تنظیمات
+// config.js
 export const CONFIG = {
-  API_BASE_URL: config.API_BASE_URL,
-  WS_HOSTS: config.WS_HOSTS
+  API_BASE_URL: 'http://localhost:5000',
+  WS_HOSTS: ['ws://localhost:4000/ws']
 };
