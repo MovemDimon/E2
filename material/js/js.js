@@ -33,3 +33,5 @@ function updateBalance() {
 }
 
 initTasks();
+
+window.completeTaskUrl = completeTaskUrl;
