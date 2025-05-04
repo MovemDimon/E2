@@ -1,6 +1,4 @@
 // main.js (coin clicker)
-console.log("CONFIG:", CONFIG);
-alert("JS Loaded!");
 
 import { CONFIG } from './config.js';
 
