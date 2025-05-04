@@ -1,6 +1,4 @@
 // js.js (generic tasks)
-console.log("CONFIG:", CONFIG);
-alert("JS Loaded!");
 
 import { CONFIG } from './config.js';
 
