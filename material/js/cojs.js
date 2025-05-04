@@ -1,9 +1,7 @@
 // Cojs.js (copy link)
-export function setupCopy() {
-  document.getElementById('copyButton').addEventListener('click', () => {
-    const copyText = document.getElementById('link');
-    copyText.select();
-    document.execCommand('copy');
-    alert('Link copied to clipboard!');
-  });
-}
+document.getElementById('copyButton').addEventListener('click', function() {
+  var copyText = document.getElementById('link');
+  copyText.select();
+  document.execCommand('copy');
+  alert('Link copied to clipboard!');
+});
