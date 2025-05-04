@@ -1,33 +1,22 @@
 // Task.js
-import { CONFIG } from './config.js';
-
-const TASK_REWARDS = {
-  invite3: 10000,
-  invite5: 20000,
-  invite10: 70000,
-  invite20: 200000
-};
-
 let balance = 0;
 let invitedFriends = 0;
 
-async function init() {
-  const res = await fetch(`${CONFIG.API_BASE_URL}/user/state`);
-  const data = await res.json();
-  balance = data.balance;
-  invitedFriends = data.invitedFriends;
-  updateDisplay();
+async function initTaskModule() {
+  try {
+    const res = await fetch(window.CONFIG.API_BASE_URL + '/user/state');
+    const data = await res.json();
+    balance = data.balance;
+    invitedFriends = data.invitedFriends;
+    updateDisplay();
+  } catch (e) {
+    console.error('Error loading state:', e);
+  }
 }
 
-// تابع تکمیل تسک بدون پارامتر reward
-async function completeTask(taskName) {
-  const reward = TASK_REWARDS[taskName];
-  if (!reward) {
-    alert('تسک نامعتبر است.');
-    return;
-  }
+async function completeTask(reward, taskName) {
   try {
-    const res = await fetch(`${CONFIG.API_BASE_URL}/task/complete`, {
+    const res = await fetch(window.CONFIG.API_BASE_URL + '/task/complete', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ taskName })
@@ -40,7 +29,7 @@ async function completeTask(taskName) {
     balance = result.newBalance;
     invitedFriends = result.invitedFriends;
     updateDisplay();
-    alert(`🎉 تسک ${taskName} با موفقیت انجام شد و ${reward.toLocaleString()} کوین دریافت کردید!`);
+    alert('🎉 You have completed the task and received your reward!');
   } catch (err) {
     console.error(err);
     alert('خطا در برقراری ارتباط با سرور.');
@@ -54,16 +43,15 @@ function updateDisplay() {
 }
 
 function updateInviteButtons() {
-  Object.entries(TASK_REWARDS).forEach(([key, _]) => {
-    const n = Number(key.replace('invite', ''));
-    const btn = document.getElementById(`claimInvite${n}`);
-    if (btn) btn.disabled = invitedFriends < n;
+  [3,5,10,20].forEach(function(n) {
+    var btn = document.getElementById('claimInvite' + n);
+    btn.disabled = invitedFriends < n;
   });
 }
 
 async function inviteFriend() {
   try {
-    const res = await fetch(`${CONFIG.API_BASE_URL}/invite`, { method: 'POST' });
+    const res = await fetch(window.CONFIG.API_BASE_URL + '/invite', { method: 'POST' });
     const data = await res.json();
     if (!data.error) {
       invitedFriends = data.invitedFriends;
@@ -74,8 +62,5 @@ async function inviteFriend() {
   }
 }
 
-// Initialize on load
-init();
-
-window.completeTask = completeTask;
-window.inviteFriend = inviteFriend;
+// initialize
+initTaskModule();
