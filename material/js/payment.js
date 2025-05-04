@@ -1,48 +1,30 @@
 // payment.js
-import { CONFIG } from './config.js';
-
-export async function handlePayment(coins, usdPrice) {
+async function handlePayment(coins, usdPrice) {
   try {
-    // Fetch userId from server
-    const res = await fetch(`${CONFIG.API_BASE_URL}/user/id`);
-    if (!res.ok) throw new Error('Failed to get userId');
-    const { userId } = await res.json();
-
-    const packageData = { coins, usdPrice, userId };
-    const deeplink = `https://t.me/Daimonium_bot?start=pay_${btoa(JSON.stringify(packageData))}`;
+    var res = await fetch(window.CONFIG.API_BASE_URL + '/user/id');
+    var data = await res.json();
+    var userId = data.userId;
+    var packageData = { coins: coins, usdPrice: usdPrice, userId: userId };
+    var deeplink = 'https://t.me/Daimonium_bot?start=pay_' + btoa(JSON.stringify(packageData));
     window.open(deeplink, '_blank');
 
-    // Connect to WebSocket
-    const host = CONFIG.WS_HOSTS[Math.floor(Math.random() * CONFIG.WS_HOSTS.length)];
-    const ws = new WebSocket(`${host}/ws?userId=${userId}`);
+    var hosts = window.CONFIG.WS_HOSTS;
+    var host = hosts[Math.floor(Math.random() * hosts.length)];
+    var ws = new WebSocket(host + '?userId=' + userId);
 
-    ws.onopen = () => {
+    ws.onopen = function() {
       ws.send(JSON.stringify({ type: 'payment_request', data: packageData }));
     };
-
-    ws.onmessage = ({ data }) => {
-      try {
-        const msg = JSON.parse(data);
-        if (msg.event === 'payment_response') {
-          document.getElementById('balance').innerText = msg.data.newBalance;
-        } else if (msg.event === 'payment_error') {
-          alert('خطا در پرداخت: ' + msg.data.error);
-        }
-      } catch (e) {
-        console.error('Invalid message received from WebSocket:', data);
+    ws.onmessage = function(evt) {
+      var msg = JSON.parse(evt.data);
+      if (msg.event === 'payment_response') {
+        document.getElementById('balance').innerText = msg.data.newBalance;
+      } else if (msg.event === 'payment_error') {
+        alert('خطا در پرداخت: ' + msg.data.error);
       }
     };
-
-    ws.onerror = (err) => {
-      console.error('WebSocket error:', err);
-      alert('خطا در ارتباط WebSocket');
-    };
-
-    ws.onclose = () => {
-      console.warn('WebSocket connection closed');
-    };
+    ws.onerror = function() { alert('WebSocket Error'); };
   } catch (err) {
-    console.error('Payment Error:', err);
-    alert('مشکلی در فرآیند پرداخت رخ داد.');
+    console.error(err);
   }
 }
