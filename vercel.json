@@ -2,11 +2,13 @@
   "version": 2,
   "builds": [
     { "src": "*.html", "use": "@vercel/static" },
-    { "src": "material/**", "use": "@vercel/static" }
+    { "src": "material/**", "use": "@vercel/static" },
+    { "src": "backend/index.js", "use": "@vercel/node" }
   ],
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
-    { "source": "/home", "destination": "/home.html" }
+    { "source": "/home", "destination": "/home.html" },
+    { "source": "/api/(.*)", "destination": "/backend/index.js" }
   ],
   "headers": [
     {
