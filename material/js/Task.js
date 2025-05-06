@@ -26,8 +26,11 @@ async function completeTask(reward, taskName) {
       alert(result.error);
       return;
     }
-    balance = result.newBalance;
-    invitedFriends = result.invitedFriends;
+    addTask(taskName, reward);
+    const data = getLocalData();
+    balance = data.balance;
+    invitedFriends = data.invitedFriends;
+ 
     updateDisplay();
     alert('🎉 You have completed the task and received your reward!');
   } catch (err) {
