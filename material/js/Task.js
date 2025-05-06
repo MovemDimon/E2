@@ -1,42 +1,28 @@
-// Task.js
 let balance = 0;
 let invitedFriends = 0;
 
-async function initTaskModule() {
-  try {
-    const res = await fetch(window.CONFIG.API_BASE_URL + '/user/state');
-    const data = await res.json();
-    balance = data.balance;
-    invitedFriends = data.invitedFriends;
-    updateDisplay();
-  } catch (e) {
-    console.error('Error loading state:', e);
-  }
+function initTaskModule() {
+  const data = JSON.parse(localStorage.getItem('userData') || '{}');
+  balance = data.balance || 0;
+  invitedFriends = data.invitedFriends || 0;
+  updateDisplay();
 }
 
-async function completeTask(reward, taskName) {
-  try {
-    const res = await fetch(window.CONFIG.API_BASE_URL + '/task/complete', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ taskName })
-    });
-    const result = await res.json();
-    if (result.error) {
-      alert(result.error);
-      return;
-    }
-    addTask(taskName, reward);
-    const data = getLocalData();
-    balance = data.balance;
-    invitedFriends = data.invitedFriends;
- 
-    updateDisplay();
-    alert('🎉 You have completed the task and received your reward!');
-  } catch (err) {
-    console.error(err);
-    alert('خطا در برقراری ارتباط با سرور.');
-  }
+function completeTask(reward, taskName) {
+  addTask(taskName, reward);
+
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  userData.balance = (userData.balance || 0) + reward;
+  balance = userData.balance;
+
+  localStorage.setItem('userData', JSON.stringify(userData));
+  updateDisplay();
+
+  const syncQueue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
+  syncQueue.push({ type: 'task', taskName, reward, timestamp: Date.now() });
+  localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
+
+  alert('🎉 You have completed the task and received your reward!');
 }
 
 function updateDisplay() {
@@ -46,24 +32,22 @@ function updateDisplay() {
 }
 
 function updateInviteButtons() {
-  [3,5,10,20].forEach(function(n) {
+  [3, 5, 10, 20].forEach(function(n) {
     var btn = document.getElementById('claimInvite' + n);
     btn.disabled = invitedFriends < n;
   });
 }
 
-async function inviteFriend() {
-  try {
-    const res = await fetch(window.CONFIG.API_BASE_URL + '/invite', { method: 'POST' });
-    const data = await res.json();
-    if (!data.error) {
-      invitedFriends = data.invitedFriends;
-      updateDisplay();
-    }
-  } catch (err) {
-    console.error(err);
-  }
+function inviteFriend() {
+  invitedFriends++;
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  userData.invitedFriends = invitedFriends;
+  localStorage.setItem('userData', JSON.stringify(userData));
+  updateDisplay();
+
+  const syncQueue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
+  syncQueue.push({ type: 'invite', timestamp: Date.now() });
+  localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
 }
 
-// initialize
 initTaskModule();
