@@ -1,4 +1,3 @@
-// main.js (coin clicker)
 document.addEventListener('DOMContentLoaded', function() {
   var image = document.getElementById('coin');
   var label = document.querySelector('h1');
@@ -8,14 +7,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
   var state = { coins: 0, total: 500, power: 500, count: 1 };
 
-  async function loadState() {
-    try {
-      var res = await fetch(window.CONFIG.API_BASE_URL + '/clicker/state');
-      state = await res.json();
-      updateUI();
-    } catch (e) {
-      console.error(e);
-    }
+  function loadState() {
+    const saved = JSON.parse(localStorage.getItem('clicker') || '{}');
+    state = Object.assign(state, saved);
+    updateUI();
+  }
+
+  function saveState() {
+    localStorage.setItem('clicker', JSON.stringify(state));
   }
 
   function updateUI() {
@@ -25,21 +24,28 @@ document.addEventListener('DOMContentLoaded', function() {
     progress.style.width = (100 * state.power / state.total) + '%';
   }
 
-  image.addEventListener('click', async function(e) {
-    try {
-      await fetch(window.CONFIG.API_BASE_URL + '/clicker/click', { method: 'POST' });
-      await loadState();
+  image.addEventListener('click', function(e) {
+    if (state.power > 0) {
+      state.coins += state.count;
+      state.power -= 1;
+
+      // برای sync بعدی ذخیره کن
+      const syncQueue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
+      syncQueue.push({ type: 'click', count: state.count, timestamp: Date.now() });
+      localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
+
+      saveState();
+      updateUI();
       animateCoin(e.offsetX, e.offsetY, image);
-    } catch (err) {
-      console.error(err);
     }
   });
 
-  setInterval(async function() {
-    try {
-      await fetch(window.CONFIG.API_BASE_URL + '/clicker/regenerate', { method: 'POST' });
-      await loadState();
-    } catch (e) { console.error(e); }
+  setInterval(function() {
+    if (state.power < state.total) {
+      state.power += 1;
+      saveState();
+      updateUI();
+    }
   }, 1000);
 
   function animateCoin(x, y, img) {
