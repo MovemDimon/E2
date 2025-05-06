@@ -1,38 +1,30 @@
-// js.js (generic tasks)
+// js.js (generic tasks - modified)
 var balanceLocal = 0;
 
-async function initGenericTasks() {
-  try {
-    const res = await fetch(window.CONFIG.API_BASE_URL + '/user/balance');
-    const data = await res.json();
-    balanceLocal = data.balance;
-    updateBalance();
-  } catch (err) {
-    console.error(err);
-  }
+function initGenericTasks() {
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  balanceLocal = userData.balance || 0;
+  updateBalance();
 }
 
-async function completeTaskUrl(reward, taskUrl) {
-  try {
-    const res = await fetch(window.CONFIG.API_BASE_URL + '/task/complete-url', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ taskUrl: taskUrl })
-    });
-    const result = await res.json();
-    if (result.newBalance !== undefined) {
-      balanceLocal = result.newBalance;
-      updateBalance();
-      window.open(taskUrl, '_blank');
-    }
-  } catch (err) {
-    console.error(err);
-  }
+function completeTaskUrl(reward, taskUrl) {
+  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
+  userData.balance = (userData.balance || 0) + reward;
+  balanceLocal = userData.balance;
+
+  // ذخیره برای همگام‌سازی بعدی
+  const syncQueue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
+  syncQueue.push({ type: 'task-url', taskUrl, reward, timestamp: Date.now() });
+  localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
+
+  localStorage.setItem('userData', JSON.stringify(userData));
+  updateBalance();
+
+  window.open(taskUrl, '_blank');
 }
 
 function updateBalance() {
   document.getElementById('balance').textContent = balanceLocal;
 }
 
-// initialize
 initGenericTasks();
