@@ -112,7 +112,7 @@ function syncWithServer() {
         }
     };
 
-    fetch('https://your-api.com/sync', {
+    fetch('/api', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
