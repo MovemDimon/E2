@@ -1,30 +1,36 @@
-// js.js (generic tasks - modified)
-var balanceLocal = 0;
+// ========== Initialize Balance ==========
+let balance = parseInt(localStorage.getItem('balance')) || 0;
 
-function initGenericTasks() {
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  balanceLocal = userData.balance || 0;
-  updateBalance();
-}
+// ========== Add Balance Update Listener ========== //
+window.addEventListener('storage', (e) => {
+    if (e.key === 'balance') {
+        balance = parseInt(e.newValue) || 0;
+        updateBalance();
+    }
+});
 
-function completeTaskUrl(reward, taskUrl) {
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  userData.balance = (userData.balance || 0) + reward;
-  balanceLocal = userData.balance;
-
-  // ذخیره برای همگام‌سازی بعدی
-  const syncQueue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
-  syncQueue.push({ type: 'task-url', taskUrl, reward, timestamp: Date.now() });
-  localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
-
-  localStorage.setItem('userData', JSON.stringify(userData));
-  updateBalance();
-
-  window.open(taskUrl, '_blank');
-}
-
+// ========== Update UI ==========
 function updateBalance() {
-  document.getElementById('balance').textContent = balanceLocal;
+    const balanceElement = document.getElementById('balance');
+    if (balanceElement) {
+        balanceElement.textContent = balance;
+    }
 }
 
-initGenericTasks();
+// ========== Task Completion ==========
+function completeTask(reward, taskUrl) {
+    if (localStorage.getItem(taskUrl) === 'true') {
+        alert('You have already completed this task.');
+        return;
+    }
+
+    balance += reward;
+    localStorage.setItem('balance', balance.toString());
+    localStorage.setItem(taskUrl, 'true');
+    updateBalance();
+
+    window.open(taskUrl, '_blank');
+}
+
+// ========== Initial Render ==========
+updateBalance();
