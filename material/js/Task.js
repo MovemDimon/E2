@@ -1,53 +1,88 @@
-let balance = 0;
-let invitedFriends = 0;
+// مقدار اولیه
+let balance = parseInt(localStorage.getItem('balance')) || 0;
+let invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
 
-function initTaskModule() {
-  const data = JSON.parse(localStorage.getItem('userData') || '{}');
-  balance = data.balance || 0;
-  invitedFriends = data.invitedFriends || 0;
-  updateDisplay();
-}
-
+// تسک دعوت دوستان
 function completeTask(reward, taskName) {
-  addTask(taskName, reward);
+    const userId = localStorage.getItem('userId');
+    if (!userId) {
+        alert('Please login first!');
+        return;
+    }
 
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  userData.balance = (userData.balance || 0) + reward;
-  balance = userData.balance;
+    // اگر قبلاً انجام شده
+    if (localStorage.getItem(taskName) === 'true') {
+        alert('You have already completed this task.');
+        return;
+    }
 
-  localStorage.setItem('userData', JSON.stringify(userData));
-  updateDisplay();
+    // بررسی شرایط برای هر تسک
+    const thresholds = {
+        invite3: 3,
+        invite5: 5,
+        invite10: 10,
+        invite20: 20
+    };
 
-  const syncQueue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
-  syncQueue.push({ type: 'task', taskName, reward, timestamp: Date.now() });
-  localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
+    const rewards = {
+        invite3: 10000,
+        invite5: 20000,
+        invite10: 70000,
+        invite20: 200000
+    };
 
-  alert('🎉 You have completed the task and received your reward!');
+    const requiredInvites = thresholds[taskName];
+    const taskReward = rewards[taskName];
+
+    if (invitedFriends >= requiredInvites) {
+        balance += taskReward;
+        localStorage.setItem('balance', balance);
+        localStorage.setItem(taskName, 'true');
+
+        updateBalance();
+
+        alert("🎉 You have completed the task and received your reward!");
+
+        // Optional: sync
+        if (typeof syncWithServer === 'function') {
+            syncWithServer();
+        }
+    } else {
+        alert(`You need to invite more friends to complete this task. Current invites: ${invitedFriends}`);
+    }
 }
 
-function updateDisplay() {
-  document.getElementById('balance').textContent = balance;
-  document.getElementById('inviteCount').textContent = invitedFriends;
-  updateInviteButtons();
+// نمایش موجودی
+function updateBalance() {
+    document.getElementById('balance').textContent = balance.toLocaleString();
 }
 
-function updateInviteButtons() {
-  [3, 5, 10, 20].forEach(function(n) {
-    var btn = document.getElementById('claimInvite' + n);
-    btn.disabled = invitedFriends < n;
-  });
-}
-
+// افزایش تعداد دعوت‌شده‌ها
 function inviteFriend() {
-  invitedFriends++;
-  const userData = JSON.parse(localStorage.getItem('userData') || '{}');
-  userData.invitedFriends = invitedFriends;
-  localStorage.setItem('userData', JSON.stringify(userData));
-  updateDisplay();
-
-  const syncQueue = JSON.parse(localStorage.getItem('syncQueue') || '[]');
-  syncQueue.push({ type: 'invite', timestamp: Date.now() });
-  localStorage.setItem('syncQueue', JSON.stringify(syncQueue));
+    invitedFriends++;
+    localStorage.setItem('invitedFriends', invitedFriends);
+    updateInviteTaskStatus();
 }
 
-initTaskModule();
+// بررسی وضعیت دکمه‌ها
+function updateInviteTaskStatus() {
+    const claimButton3 = document.getElementById('claimInvite3');
+    const claimButton5 = document.getElementById('claimInvite5');
+    const claimButton10 = document.getElementById('claimInvite10');
+    const claimButton20 = document.getElementById('claimInvite20');
+
+    const inviteTaskStatus = document.getElementById('inviteTaskStatus');
+
+    claimButton3.disabled = invitedFriends < 3;
+    claimButton5.disabled = invitedFriends < 5;
+    claimButton10.disabled = invitedFriends < 10;
+    claimButton20.disabled = invitedFriends < 20;
+
+    inviteTaskStatus.textContent = invitedFriends >= 3
+        ? "✅ Invite 3 friends - Task Complete!"
+        : `Invite ${3 - invitedFriends} more friends to complete this task.`;
+}
+
+// مقداردهی اولیه
+updateBalance();
+updateInviteTaskStatus();
