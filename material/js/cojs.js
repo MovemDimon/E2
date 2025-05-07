@@ -1,7 +1,11 @@
-// Cojs.js (copy link)
-document.getElementById('copyButton').addEventListener('click', function() {
-  var copyText = document.getElementById('link');
-  copyText.select();
-  document.execCommand('copy');
-  alert('Link copied to clipboard!');
+document.getElementById('copyButton').addEventListener('click', async function () {
+  const copyText = document.getElementById('link');
+
+  try {
+    await navigator.clipboard.writeText(copyText.value);
+    alert("Link copied to clipboard!");
+  } catch (err) {
+    console.error("Failed to copy:", err);
+    alert("Copy failed. Please copy manually.");
+  }
 });
