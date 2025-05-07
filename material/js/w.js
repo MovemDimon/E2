@@ -1,27 +1,32 @@
-// w.js (wallet modal)
-document.getElementById('openModalBtn').addEventListener('click', function() {
-  document.getElementById('walletModal').style.display = 'flex';
+const openModalBtn = document.getElementById('openModalBtn');
+const walletModal = document.getElementById('walletModal');
+const closeBtn = document.querySelector('.close-btn');
+const connectWalletBtn = document.getElementById('connectWallet');
+const cancelWalletBtn = document.getElementById('cancelWallet');
+const statusMessage = document.getElementById('statusMessage');
+
+function closeModal() {
+    walletModal.style.display = 'none';
+    statusMessage.textContent = '';
+}
+
+openModalBtn.addEventListener('click', () => {
+    walletModal.style.display = 'flex';
 });
 
-document.querySelector('.close-btn').addEventListener('click', function() {
-  document.getElementById('walletModal').style.display = 'none';
+closeBtn.addEventListener('click', closeModal);
+
+window.addEventListener('click', (event) => {
+    if (event.target === walletModal) {
+        closeModal();
+    }
 });
 
-window.addEventListener('click', function(event) {
-  if (event.target === document.getElementById('walletModal')) {
-    document.getElementById('walletModal').style.display = 'none';
-  }
+connectWalletBtn.addEventListener('click', () => {
+    statusMessage.textContent = 'Connecting to your TON wallet...';
+    setTimeout(() => {
+        statusMessage.textContent = 'Connection failed. Please try again.';
+    }, 2000);
 });
 
-document.getElementById('connectWallet').addEventListener('click', function() {
-  var statusMessage = document.getElementById('statusMessage');
-  statusMessage.textContent = 'Connecting to your TON wallet...';
-  setTimeout(function() {
-    statusMessage.textContent = 'oops try again something went wrong!';
-  }, 2000);
-});
-
-document.getElementById('cancelWallet').addEventListener('click', function() {
-  document.getElementById('walletModal').style.display = 'none';
-  document.getElementById('statusMessage').textContent = '';
-});
+cancelWalletBtn.addEventListener('click', closeModal);
