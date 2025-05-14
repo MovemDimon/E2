@@ -1,9 +1,9 @@
 import mongoose from 'mongoose';
 
 const userSchema = new mongoose.Schema({
-  userId: String,
-  balance: { type: Number, default: 0 },
-  invitedFriends: { type: Number, default: 0 },
-});
+  userId:         { type: String, required: true, unique: true },
+  balance:        { type: Number, default: 0 },
+  invitedFriends: { type: Number, default: 0 }
+}, { collection: 'users', timestamps: true });
 
-export default mongoose.models.User || mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);
