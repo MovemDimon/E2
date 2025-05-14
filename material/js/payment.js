@@ -1,8 +1,5 @@
 // کمک: Base64 encode Unicode-safe
 function toBase64Unicode(str) {
-  // first we use encodeURIComponent to get percent-encoded UTF-8,
-  // then we convert the percent encodings into raw bytes which
-  // btoa can handle
   return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g,
     (match, p1) => String.fromCharCode('0x' + p1)
   ));
@@ -34,13 +31,14 @@ async function handlePayment(coins, usdPrice) {
       Math.floor(Math.random() * websocketHosts.length)
     ];
 
-    const ws = new WebSocket(`${selectedHost}?userId=${encodeURIComponent(userId)}`);
+    // اضافه کردن api_key به کوئری
+    const ws = new WebSocket(`${selectedHost}?userId=${encodeURIComponent(userId)}&api_key=<YOUR_WS_API_KEY>`);
 
     ws.onopen = () => {
       if (ws.readyState === WebSocket.OPEN) {
         try {
           ws.send(JSON.stringify({
-            type: "payment_request",
+            action: "confirm_payment",
             data: packageData
           }));
         } catch (sendErr) {
@@ -50,26 +48,48 @@ async function handlePayment(coins, usdPrice) {
       }
     };
 
-    ws.onmessage = (event) => {
+    ws.onmessage = async (event) => {
       try {
         const msg = JSON.parse(event.data);
-        if (msg.event === "payment_response") {
+        if (msg.event === "payment_result") {
           const data = msg.data;
-          // در صورت موجود بودن newBalance
-          if (data?.newBalance !== undefined) {
+          if (data?.status === 'success' && data.newBalance !== undefined) {
+            // ۱) بروزرسانی UI و localStorage
             const balanceEl = document.getElementById('balance');
             if (balanceEl) {
               balanceEl.innerText = data.newBalance;
               localStorage.setItem('balance', data.newBalance);
-              if (typeof syncWithServer === 'function') {
-                syncWithServer();
-              }
+              if (typeof syncWithServer === 'function') syncWithServer(); // اختیاری
             }
+
+            // ۲) رکورد پرداخت
+            const paymentRecord = {
+              userId,
+              type: 'payment',
+              coins,
+              usdPrice,
+              status: 'success',
+              errorMsg: '',
+              timestamp: new Date().toISOString(),
+              newBalance: data.newBalance
+            };
+
+            // ۳) همگام‌سازی فوری با دیتابیس
+            try {
+              await fetch('/data', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(paymentRecord)
+              });
+            } catch (syncErr) {
+              console.error('Payment sync error:', syncErr);
+            }
+
+          } else if (data?.status === 'error') {
+            alert("❌ خطا در پرداخت: " + (data.message || "نامشخص"));
           } else {
             console.warn("⚠️ پاسخ پرداخت فاقد newBalance است:", data);
           }
-        } else if (msg.event === "payment_error") {
-          alert("❌ خطا در پرداخت: " + (msg.data?.error || "نامشخص"));
         }
       } catch (parseErr) {
         console.error("خطا در پردازش پیام WebSocket:", parseErr);
