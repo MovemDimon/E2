@@ -1,22 +1,24 @@
 import express from 'express';
+import mongoose from 'mongoose';
 import dotenv from 'dotenv';
-import cors from 'cors';
-import connectDB from './lib/db.js';
-import userRoutes from './api/user.js';
-import taskRoutes from './api/task.js';
-import inviteRoutes from './api/invite.js';
-import clickerRoutes from './api/clicker.js';
+import dataRoutes from './api/data.js';
 
 dotenv.config();
-await connectDB();
-
 const app = express();
-app.use(cors());
 app.use(express.json());
 
-app.use('/user', userRoutes);
-app.use('/task', taskRoutes);
-app.use('/invite', inviteRoutes);
-app.use('/clicker', clickerRoutes);
+// اتصال به MongoDB
+mongoose.connect(process.env.MONGODB_URI, {
+  useNewUrlParser:    true,
+  useUnifiedTopology: true
+})
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.error('MongoDB connection error:', err));
 
-export default app;
+// مسیر دریافت داده‌ها
+app.use('/data', dataRoutes);
+
+// (بقیه‌ی مسیرها اگر لازم دارید …)
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
