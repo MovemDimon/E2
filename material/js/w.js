@@ -1,32 +1,23 @@
 const openModalBtn = document.getElementById('openModalBtn');
-const walletModal = document.getElementById('walletModal');
-const closeBtn = document.querySelector('.close-btn');
-const connectWalletBtn = document.getElementById('connectWallet');
-const cancelWalletBtn = document.getElementById('cancelWallet');
-const statusMessage = document.getElementById('statusMessage');
+const walletModal   = document.getElementById('walletModal');
+const closeBtn      = walletModal.querySelector('.close-btn');
+const connectBtn    = document.getElementById('connectWallet');
+const cancelBtn     = document.getElementById('cancelWallet');
+const statusMsg     = document.getElementById('statusMessage');
 
 function closeModal() {
-    walletModal.style.display = 'none';
-    statusMessage.textContent = '';
+  walletModal.style.display = 'none';
+  statusMsg.textContent = '';
 }
-
-openModalBtn.addEventListener('click', () => {
-    walletModal.style.display = 'flex';
-});
-
+openModalBtn.addEventListener('click', () => walletModal.style.display = 'flex');
 closeBtn.addEventListener('click', closeModal);
-
-window.addEventListener('click', (event) => {
-    if (event.target === walletModal) {
-        closeModal();
-    }
+cancelBtn.addEventListener('click', closeModal);
+window.addEventListener('click', e => {
+  if (e.target === walletModal) closeModal();
 });
-
-connectWalletBtn.addEventListener('click', () => {
-    statusMessage.textContent = 'Connecting to your TON wallet...';
-    setTimeout(() => {
-        statusMessage.textContent = 'Connection failed. Please try again.';
-    }, 2000);
+connectBtn.addEventListener('click', () => {
+  statusMsg.textContent = 'Connecting to your TON wallet...';
+  setTimeout(() => {
+    statusMsg.textContent = 'Connection failed. Please try again.';
+  }, 2000);
 });
-
-cancelWalletBtn.addEventListener('click', closeModal);
