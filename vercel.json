@@ -8,7 +8,7 @@
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/home", "destination": "/home.html" },
-    { "source": "/api/(.*)", "destination": "/backend/index.js" }
+    { "source": "/data/(.*)", "destination": "/backend/index.js" }
   ],
   "headers": [
     {
