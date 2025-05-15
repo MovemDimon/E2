@@ -1,11 +1,9 @@
-document.getElementById('copyButton').addEventListener('click', async function () {
-  const copyText = document.getElementById('link');
-
+document.getElementById('copyButton').addEventListener('click', async () => {
+  const input = document.getElementById('link');
   try {
-    await navigator.clipboard.writeText(copyText.value);
-    alert("Link copied to clipboard!");
-  } catch (err) {
-    console.error("Failed to copy:", err);
-    alert("Copy failed. Please copy manually.");
+    await navigator.clipboard.writeText(input.value);
+    alert("✅ لینک کپی شد!");
+  } catch {
+    alert("❌ کپی نشد، لطفاً دستی کپی کنید.");
   }
 });
