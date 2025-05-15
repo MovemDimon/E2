@@ -1,131 +1,103 @@
 // ========== Initialization ==========
 const body = document.body;
-const image = body.querySelector('#coin');
-const h1 = body.querySelector('h1');
+const coinEl = document.getElementById('coin');
+const countEl = document.querySelector('h1');
 
 function initLocalStorageDefaults() {
-  if (localStorage.getItem('coins') == null) {
-    localStorage.setItem('coins', '0');
-  }
-  h1.textContent = Number(localStorage.getItem('coins')).toLocaleString();
+  if (localStorage.getItem('coins') == null) localStorage.setItem('coins', '0');
+  if (localStorage.getItem('total') == null) localStorage.setItem('total', '500');
+  if (localStorage.getItem('power') == null) localStorage.setItem('power', '500');
+  if (localStorage.getItem('count') == null) localStorage.setItem('count', '1');
+  renderStats();
+}
 
-  if (localStorage.getItem('total') == null) {
-    localStorage.setItem('total', '500');
-  }
-  body.querySelector('#total').textContent = `${localStorage.getItem('total')}`;
-
-  if (localStorage.getItem('power') == null) {
-    localStorage.setItem('power', '500');
-  }
-  body.querySelector('#power').textContent = localStorage.getItem('power');
-
-  if (localStorage.getItem('count') == null) {
-    localStorage.setItem('count', '1');
-  }
-
+function renderStats() {
+  countEl.textContent = Number(localStorage.getItem('coins')).toLocaleString();
+  document.getElementById('total').textContent = localStorage.getItem('total');
+  document.getElementById('power').textContent = localStorage.getItem('power');
   updatePowerProgress();
 }
 
 function updatePowerProgress() {
-  const power = Number(localStorage.getItem('power'));
-  const total = Number(localStorage.getItem('total'));
-  const percent = (100 * power) / total;
-  body.querySelector('.progress').style.width = `${percent}%`;
+  const power = +localStorage.getItem('power');
+  const total = +localStorage.getItem('total');
+  document.querySelector('.progress').style.width = `${(100 * power / total)}%`;
 }
 
-// ========== Coin Click Event ==========
-image.addEventListener('click', (e) => {
-  let x = e.offsetX;
-  let y = e.offsetY;
+// Coin click
+coinEl.addEventListener('click', e => {
   navigator.vibrate(5);
-
-  let coins = Number(localStorage.getItem('coins'));
-  let power = Number(localStorage.getItem('power'));
-
-  if (power > 0) {
-    coins += 1;
-    power -= 1;
-    localStorage.setItem('coins', coins.toString());
-    localStorage.setItem('power', power.toString());
-    h1.textContent = coins.toLocaleString();
-    body.querySelector('#power').textContent = power.toString();
-    updatePowerProgress();
-  }
-
-  // انیمیشن سکه
-  if (x < 150 && y < 150) {
-    image.style.transform = 'translate(-0.25rem, -0.25rem) skewY(-10deg) skewX(5deg)';
-  } else if (x < 150 && y > 150) {
-    image.style.transform = 'translate(-0.25rem, 0.25rem) skewY(-10deg) skewX(5deg)';
-  } else if (x > 150 && y > 150) {
-    image.style.transform = 'translate(0.25rem, 0.25rem) skewY(10deg) skewX(-5deg)';
-  } else if (x > 150 && y < 150) {
-    image.style.transform = 'translate(0.25rem, -0.25rem) skewY(10deg) skewX(-5deg)';
-  }
-  setTimeout(() => { image.style.transform = 'translate(0px, 0px)'; }, 100);
+  let coins = +localStorage.getItem('coins');
+  let power = +localStorage.getItem('power');
+  if (power <= 0) return;
+  coins++; power--;
+  localStorage.setItem('coins', coins);
+  localStorage.setItem('power', power);
+  renderStats();
+  animateCoin(e);
 });
 
-// ========== Passive Power Regen ==========
+function animateCoin({ offsetX: x, offsetY: y }) {
+  const translateX = x < 150 ? -0.25 : 0.25;
+  const translateY = y < 150 ? -0.25 : 0.25;
+  const skewX = x < 150 ? 5 : -5;
+  const skewY = y < 150 ? -10 : 10;
+  coinEl.style.transform = `translate(${translateX}rem, ${translateY}rem) skewX(${skewX}deg) skewY(${skewY}deg)`;
+  setTimeout(() => coinEl.style.transform = '', 100);
+}
+
+// Passive regen
 setInterval(() => {
-  let count = Number(localStorage.getItem('count'));
-  let power = Number(localStorage.getItem('power'));
-  const total = Number(localStorage.getItem('total'));
+  let power = +localStorage.getItem('power');
+  const total = +localStorage.getItem('total');
+  const count = +localStorage.getItem('count');
   if (power < total) {
-    power = Math.min(total, power + count);
-    localStorage.setItem('power', power.toString());
-    body.querySelector('#power').textContent = power.toString();
-    updatePowerProgress();
+    localStorage.setItem('power', Math.min(total, power + count));
+    renderStats();
   }
 }, 1000);
 
-// ========== Weekly Sync System ==========
+// Weekly sync
 const oneWeekMs = 7 * 24 * 60 * 60 * 1000;
-
 async function syncWithServer() {
   const userId = localStorage.getItem('userId');
   const authToken = localStorage.getItem('authToken');
-  if (!userId || !authToken) {
-    console.warn('Sync skipped: Missing user ID or auth token');
-    return;
-  }
-
-  // 1. ارسال وضعیت کاربر
-  await fetch('/data', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      'Authorization': `Bearer ${authToken}`
-    },
-    body: JSON.stringify({
-      userId,
-      balance: parseInt(localStorage.getItem('balance')) || 0,
-      invitedFriends: parseInt(localStorage.getItem('invitedFriends')) || 0
-    })
-  }).catch(err => console.error('User sync error:', err));
-
-  // 2. ارسال آخرین پرداخت (در صورت وجود)
-  const lastPaymentRaw = localStorage.getItem('lastPayment');
-  if (lastPaymentRaw) {
-    await fetch('/data', {
+  if (!userId || !authToken) return;
+  const payload = {
+    userId,
+    balance: +localStorage.getItem('balance') || 0,
+    invitedFriends: +localStorage.getItem('invitedFriends') || 0,
+    coins: localStorage.getItem('coins'),
+    total: localStorage.getItem('total'),
+    power: localStorage.getItem('power'),
+    count: localStorage.getItem('count'),
+    tasks: {
+      invite3: localStorage.getItem('invite3'),
+      invite5: localStorage.getItem('invite5'),
+      invite10: localStorage.getItem('invite10'),
+      invite20: localStorage.getItem('invite20'),
+    }
+  };
+  try {
+    const res = await fetch('/data', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${authToken}`
       },
-      body: lastPaymentRaw
-    }).catch(err => console.error('Payment sync error:', err));
-
-    localStorage.removeItem('lastPayment');
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) throw new Error(res.statusText);
+    localStorage.setItem('lastSyncDate', new Date().toISOString());
+  } catch (e) {
+    console.error('Sync Error:', e);
   }
-
-  localStorage.setItem('lastSyncDate', new Date().toISOString());
 }
 
-// ========== App Load ==========
 document.addEventListener('DOMContentLoaded', () => {
   initLocalStorageDefaults();
-  const lastSyncDate = localStorage.getItem('lastSyncDate');
-  if (!lastSyncDate || (Date.now() - new Date(lastSyncDate).getTime()) >= oneWeekMs) {
+  const last = localStorage.getItem('lastSyncDate');
+  if (!last || Date.now() - new Date(last) >= oneWeekMs) {
     syncWithServer();
   }
 });
