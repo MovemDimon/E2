@@ -8,14 +8,15 @@ module.exports = {
   collectCoverage: true,
   coverageDirectory: 'coverage',
 
-  // نادیده‌گرفتن فولدرهای غیرتستی
+  // این فولدرها را نادیده بگیرد
   testPathIgnorePatterns: [
     '/node_modules/',
     '/cypress/'
   ],
 
-  // این الگو هر فایل *.test.js یا *.spec.js را در کل پروژه پیدا می‌کند
+  // ← این بخش را جایگزین کنید:
   testMatch: [
-    '**/?(*.)+(spec|test).[jt]s?(x)'
+    // هر فایلی که در src/__tests__ با پسوند .test.js باشد
+    '<rootDir>/src/__tests__/**/*.test.js'
   ]
 };
