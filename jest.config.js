@@ -1,22 +1,24 @@
 // jest.config.js
 module.exports = {
   testEnvironment: 'jsdom',
-  transform: {
-    '^.+\\.js$': 'babel-jest'
-  },
+  transform: { '^.+\\.js$': 'babel-jest' },
   moduleFileExtensions: ['js', 'json'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
 
-  // این فولدرها را نادیده بگیرد
+  // نادیده‌گرفتن فولدرهای غیرتستی
   testPathIgnorePatterns: [
     '/node_modules/',
     '/cypress/'
   ],
 
-  // ← این بخش را جایگزین کنید:
+  // ← این قسمت را قرار دهید:
+  roots: [
+    '<rootDir>'
+  ],
   testMatch: [
-    // هر فایلی که در src/__tests__ با پسوند .test.js باشد
-    '<rootDir>/src/__tests__/**/*.test.js'
+    // هر فایلی با پسوند .test.js یا .spec.js در ریشه یا زیرپوشه‌ها
+    '<rootDir>/**/*.test.js',
+    '<rootDir>/**/*.spec.js'
   ]
 };
