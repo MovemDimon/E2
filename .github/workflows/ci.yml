@@ -48,7 +48,7 @@ jobs:
         run: npm start &
 
       - name: Wait for server
-        run: npx wait-on http://localhost:3000
+        run: npx wait-on http://localhost:8080
 
       - name: Run Cypress integration tests
         run: npm run test:e2e
