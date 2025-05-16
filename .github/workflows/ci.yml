@@ -25,13 +25,14 @@ jobs:
 
       - name: Run Jest
         run: npm run test:unit
-
+        
   cypress-e2e:
-    name: Cypress E2E
-    needs: js-unit
-    runs-on: ubuntu-latest
 
-    steps:
+   name: Cypress E2E    
+   needs: js-unit    
+   runs-on: ubuntu-latest
+
+   steps:
       - name: Checkout code
         uses: actions/checkout@v3
 
@@ -43,18 +44,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Install wait-on
-        run: npm install -g wait-on
-
       - name: Start dev server
-        run: npm run serve > serve.log 2>&1 &
+        run: npm run serve -- --port 8080 --host 0.0.0.0 &
 
-      - name: Wait for server to be ready
-        run: wait-on http://localhost:8080 --timeout 60000
+      - name: Wait for server
+        run: npx wait-on http://localhost:8080 --timeout 120000
 
       - name: Run Cypress integration tests
         run: npm run test:e2e
 
-      - name: Debug server logs if failed
-        if: failure()
-        run: cat serve.log
