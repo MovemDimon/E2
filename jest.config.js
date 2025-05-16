@@ -1,31 +1,21 @@
 // jest.config.js
 module.exports = {
-  // محیط jsdom برای APIهای مرورگر
   testEnvironment: 'jsdom',
-
-  // Babel برای تبدیل ES6
-  transform: { '^.+\\.js$': 'babel-jest' },
-
-  // پسوندهای مجاز
+  transform: {
+    '^.+\\.js$': 'babel-jest'
+  },
   moduleFileExtensions: ['js', 'json'],
-
-  // پوشش تست
   collectCoverage: true,
   coverageDirectory: 'coverage',
 
-  // نادیده گرفتن cypress
+  // نادیده‌گرفتن فولدرهای غیرتستی
   testPathIgnorePatterns: [
     '/node_modules/',
     '/cypress/'
   ],
 
-  // ← این بخش را اضافه کنید:
-  roots: [
-    '<rootDir>/src'    // فقط داخل src به دنبال تست بگرد
-  ],
+  // این الگو هر فایل *.test.js یا *.spec.js را در کل پروژه پیدا می‌کند
   testMatch: [
-    // هر فایلی که در __tests__ یا با پسوند .test.js/.spec.js باشد
-    '<rootDir>/src/**/__tests__/**/*.[jt]s?(x)',
-    '<rootDir>/src/**/*.{spec,test}.[jt]s?(x)'
+    '**/?(*.)+(spec|test).[jt]s?(x)'
   ]
 };
