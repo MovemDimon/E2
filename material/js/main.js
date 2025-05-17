@@ -24,18 +24,20 @@ function updatePowerProgress() {
   document.querySelector('.progress').style.width = `${(100 * power / total)}%`;
 }
 
-// Coin click
-coinEl.addEventListener('click', e => {
-  navigator.vibrate(5);
-  let coins = +localStorage.getItem('coins');
-  let power = +localStorage.getItem('power');
-  if (power <= 0) return;
-  coins++; power--;
-  localStorage.setItem('coins', coins);
-  localStorage.setItem('power', power);
-  renderStats();
-  animateCoin(e);
-});
+// Coin click (safe)
+if (coinEl) {
+  coinEl.addEventListener('click', e => {
+    navigator.vibrate?.(5); // optional chaining for safer fallback
+    let coins = +localStorage.getItem('coins');
+    let power = +localStorage.getItem('power');
+    if (power <= 0) return;
+    coins++; power--;
+    localStorage.setItem('coins', coins);
+    localStorage.setItem('power', power);
+    renderStats();
+    animateCoin(e);
+  });
+}
 
 function animateCoin({ offsetX: x, offsetY: y }) {
   const translateX = x < 150 ? -0.25 : 0.25;
