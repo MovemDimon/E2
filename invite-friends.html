@@ -11,12 +11,33 @@
 <body>
     
 
-    <div class="frens-invite">
-        <div class="frens-invite-button">
-            <input type="text" value="http://t.me/Daimonium_bot" id="link" readonly>
-            <button id="copyButton">Copy Link</button>
-        </div>
-    </div>
+    <!-- invite-link.html -->
+<div class="frens-invite">
+  <div class="frens-invite-button">
+    <input type="text" value="https://t.me/Daimonium_bot" id="link" readonly>
+    <button id="copyButton" class="copy-btn">Copy Link</button>
+    <span id="copyFeedback" class="copy-feedback" aria-live="polite"></span>
+  </div>
+</div>
+
+<style>
+  /* بازخورد کپی */
+  .copy-feedback {
+    margin-left: 0.5rem;
+    font-size: 0.875rem;
+    color: green;
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+  .copy-feedback.visible {
+    opacity: 1;
+  }
+  .copy-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+</style>
+
 
     <nav class="bottom-nav">
         <a href="home.html" class="nav-item">
