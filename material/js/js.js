@@ -1,3 +1,5 @@
+// js.js
+
 let balance = parseInt(localStorage.getItem('balance')) || 0;
 
 window.addEventListener('storage', ({ key, newValue }) => {
@@ -12,16 +14,21 @@ function updateBalance() {
   el && (el.textContent = balance);
 }
 
-function completeTaskUrl(taskUrl, reward) {
-  if (localStorage.getItem(taskUrl) === 'true') {
-    alert('⚠️ این تسک قبلاً ثبت شده.');
-    return;
+/**
+ * ثبت تسک به‌صورت روزانه
+ * @param {string} taskUrlKey ‑ کلیدی که date ISO توش ذخیره می‌شه
+ * @param {number} reward ‑ مقدار جایزه
+ * @param {string} url ‑ آدرسی که باید باز کنه
+ */
+function completeTaskUrl(taskUrlKey, reward, url) {
+  const today = new Date().toISOString().split('T')[0];
+  if (localStorage.getItem(taskUrlKey) === today) {
+    return alert('⚠️ این تسک امروز قبلاً ثبت شده.');
   }
   balance += reward;
   localStorage.setItem('balance', balance);
-  localStorage.setItem(taskUrl, 'true');
+  localStorage.setItem(taskUrlKey, today);
   updateBalance();
-  window.open(taskUrl, '_blank');
+  window.open(url, '_blank');
+  alert(`🎉 تبریک! ${reward.toLocaleString()} سکه جایزه گرفتی.`);
 }
-
-updateBalance();
