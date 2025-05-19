@@ -18,7 +18,7 @@ function updateBalance() {
  * @param {number} reward - Reward amount
  * @param {string} url - URL to open
  */
-function completeTaskUrl(reward, taskUrl) {
+function completeTaskUrl(taskUrlKey, reward, url) {
   const today = new Date().toISOString().split('T')[0];
 
   if (localStorage.getItem(taskUrlKey) === today) {
