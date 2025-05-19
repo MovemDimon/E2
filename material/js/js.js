@@ -1,5 +1,3 @@
-// js.js
-
 let balance = parseInt(localStorage.getItem('balance')) || 0;
 
 window.addEventListener('storage', ({ key, newValue }) => {
@@ -11,24 +9,28 @@ window.addEventListener('storage', ({ key, newValue }) => {
 
 function updateBalance() {
   const el = document.getElementById('balance');
-  el && (el.textContent = balance);
+  el && (el.textContent = balance.toLocaleString());
 }
 
 /**
- * ثبت تسک به‌صورت روزانه
- * @param {string} taskUrlKey ‑ کلیدی که date ISO توش ذخیره می‌شه
- * @param {number} reward ‑ مقدار جایزه
- * @param {string} url ‑ آدرسی که باید باز کنه
+ * Registers a daily task reward
+ * @param {string} taskUrlKey - Key to store ISO date
+ * @param {number} reward - Reward amount
+ * @param {string} url - URL to open
  */
 function completeTaskUrl(taskUrlKey, reward, url) {
   const today = new Date().toISOString().split('T')[0];
+
   if (localStorage.getItem(taskUrlKey) === today) {
-    return alert('⚠️ این تسک امروز قبلاً ثبت شده.');
+    return showNotification('⚠️ This task has already been completed today.');
   }
+
   balance += reward;
   localStorage.setItem('balance', balance);
   localStorage.setItem(taskUrlKey, today);
   updateBalance();
+
   window.open(url, '_blank');
-  alert(`🎉 تبریک! ${reward.toLocaleString()} سکه جایزه گرفتی.`);
+
+  showNotification(`🎉 Congrats! You've earned ${reward.toLocaleString()} coins.`);
 }
