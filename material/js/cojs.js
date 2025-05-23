@@ -1,38 +1,29 @@
-// کمک: Base64 encode Unicode-safe
-function toBase64Unicode(str) {
-  return btoa(
-    encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) =>
-      String.fromCharCode(parseInt(p1, 16))
-    )
-  );
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   const copyButton = document.getElementById('copyButton');
-  const linkInput   = document.getElementById('link');
-  const feedback    = document.getElementById('copyFeedback');
+  const linkInput = document.getElementById('link');
+  const feedback = document.getElementById('copyFeedback');
+
+  const userId = localStorage.getItem('userId') || 'guest';
+  const inviteLink = `https://t.me/Daimonium_bot?start=${encodeURIComponent(userId)}`;
+  linkInput.value = inviteLink;
 
   async function copyAndShare() {
     copyButton.disabled = true;
-    const link = linkInput.value;
 
     try {
-      await navigator.clipboard.writeText(link);
+      await navigator.clipboard.writeText(inviteLink);
     } catch {
-      // Fallback for older browsers
       linkInput.select();
       document.execCommand('copy');
     }
 
-    // نمایش بازخورد
-    feedback.textContent = '✅ لینک کپی شد!';
+    feedback.textContent = '✅ Link copied!';
     feedback.classList.add('visible');
 
-    // باز کردن Deep Link تلگرام برای اشتراک‌گذاری
-    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(link)}&text=${encodeURIComponent('لینک مینی‌اپ را اینجا ببین!')}`;
+    const shareText = 'Join this awesome Telegram mini-app using my link!';
+    const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`;
     window.open(shareUrl, '_blank');
 
-    // بازگشت دکمه و بازخورد پس از 2 ثانیه
     setTimeout(() => {
       feedback.classList.remove('visible');
       copyButton.disabled = false;
