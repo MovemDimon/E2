@@ -22,7 +22,7 @@ function completeTaskUrl(taskUrl, reward, url, taskUrlKey) {
   const today = new Date().toISOString().split('T')[0];
 
   if (localStorage.getItem(taskUrlKey) === today) {
-    return alert('⚠️ This task has already been completed today.');
+    return showNotification('⚠️ This task has already been completed today.');
   }
 
   balance += reward;
@@ -32,5 +32,5 @@ function completeTaskUrl(taskUrl, reward, url, taskUrlKey) {
 
   window.open(url, '_blank');
 
-  alert(`🎉 Congrats! You've earned ${reward.toLocaleString()} coins.`);
+  showNotification(`🎉 Congrats! You've earned ${reward.toLocaleString()} coins.`);
 }
