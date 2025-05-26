@@ -25,12 +25,12 @@ let invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
 function completeTask(taskName) {
   const userId = localStorage.getItem('userId');
   if (!userId) {
-    alert('⚠️ Please log in before claiming rewards.');
+  showNotification('⚠️ Please log in before claiming rewards.');
     return;
   }
 
   if (localStorage.getItem(taskName) === 'true') {
-    alert('⚠️ You have already claimed this reward.');
+    showNotification('⚠️ You have already claimed this reward.');
     return;
   }
 
@@ -42,11 +42,11 @@ function completeTask(taskName) {
     localStorage.setItem('balance', balance);
     localStorage.setItem(taskName, 'true');
     updateBalance();
-    alert(`🎉 Congratulations! You received ${reward.toLocaleString()} coins.`);
+    showNotification(`🎉 Congratulations! You received ${reward.toLocaleString()} coins.`);
     if (typeof syncWithServer === 'function') syncWithServer();
   } else {
     const remaining = required - invitedFriends;
-    alert(`⚠️ You need to invite ${remaining} more friend${remaining === 1 ? '' : 's'} to claim this reward.`);
+    showNotification(`⚠️ You need to invite ${remaining} more friend${remaining === 1 ? '' : 's'} to claim this reward.`);
   }
 }
 
