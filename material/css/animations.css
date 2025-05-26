@@ -1,0 +1,41 @@
+/* ===== animations.css ===== */
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50%     { transform: translateY(-20px); }
+}
+@keyframes gradientFlow {
+  0% { background-position: 0% 50%; }
+ 50% { background-position: 100% 50%; }
+100% { background-position: 0% 50%; }
+}
+@keyframes pulse {
+  0%,100% { transform: scale(1); }
+ 50%     { transform: scale(1.15); }
+}
+@keyframes hologram-flow {
+  0% { transform: translate(0,0) rotate(45deg); }
+100% { transform: translate(100%,100%) rotate(45deg); }
+}
+
+.animate-pulse {
+  animation: pulse 2s infinite;
+}
+.holographic-card {
+  position: relative; overflow: hidden;
+  background: linear-gradient(45deg,
+    rgba(102,126,234,0.2),
+    rgba(118,75,162,0.2));
+}
+.holographic-overlay {
+  position: absolute; top: -50%; left: -50%;
+  width: 200%; height: 200%;
+  background: linear-gradient(45deg,
+    transparent 25%,
+    rgba(255,255,255,0.1) 50%,
+    transparent 75%);
+  animation: hologram-flow 4s infinite linear;
+}
+[data-parallax] {
+  transition: transform 0.3s var(--cubic-bezier);
+  will-change: transform;
+}
