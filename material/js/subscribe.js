@@ -11,13 +11,13 @@ updateBalance();
  */
 function completeOneTimeTask(taskKey, reward) {
   if (localStorage.getItem(taskKey) === 'done') {
-    return alert('⚠️ این تسک قبلاً انجام شده.');
+    return showNotification('⚠️ این تسک قبلاً انجام شده.');
   }
   balance += reward;
   localStorage.setItem('balance', balance);
   localStorage.setItem(taskKey, 'done');
   updateBalance();
-  alert(`🎉 تبریک! ${reward.toLocaleString()} سکه جایزه گرفتی.`);
+  showNotification(`🎉 تبریک! ${reward.toLocaleString()} سکه جایزه گرفتی.`);
 }
 
 /**
@@ -26,7 +26,7 @@ function completeOneTimeTask(taskKey, reward) {
 async function verifySubscribe(apiPath, storageKey) {
   const userId = localStorage.getItem(storageKey);
   if (!userId) {
-    alert('⚠️ لطفاً اول لاگین کن.');
+    showNotification('⚠️ لطفاً اول لاگین کن.');
     return false;
   }
   try {
@@ -36,10 +36,10 @@ async function verifySubscribe(apiPath, storageKey) {
       body: JSON.stringify({ userId })
     });
     const { ok } = await res.json();
-    if (!ok) alert('⚠️ هنوز تسک انجام نشده.');
+    if (!ok) showNotification('⚠️ هنوز تسک انجام نشده.');
     return ok;
   } catch {
-    alert('❌ خطا در ارتباط با سرور.');
+    showNotification('❌ خطا در ارتباط با سرور.');
     return false;
   }
 }
