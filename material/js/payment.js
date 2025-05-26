@@ -16,7 +16,7 @@ async function handlePayment(coins, usdPrice, btn) {
   try {
     const userId = localStorage.getItem('userId');
     if (!userId) {
-      alert('⚠️ User not found. Please log in first.');
+      showNotification('⚠️ User not found. Please log in first.');
       return;
     }
 
@@ -31,7 +31,7 @@ async function handlePayment(coins, usdPrice, btn) {
     const wsApiKey = process.env.NEXT_PUBLIC_WS_API_KEY;
     if (!wsUrl || !wsApiKey) {
       console.error('WebSocket config is missing!');
-      alert('❌ Payment service is not configured.');
+      showNotification('❌ Payment service is not configured.');
       return;
     }
 
@@ -44,7 +44,7 @@ async function handlePayment(coins, usdPrice, btn) {
     const WS_TIMEOUT = 30_000;
     const timeoutId = setTimeout(() => {
       ws.close();
-      alert('❌ Payment timeout. Please try again.');
+      showNotification('❌ Payment timeout. Please try again.');
     }, WS_TIMEOUT);
 
     ws.addEventListener('open', () => {
@@ -72,7 +72,7 @@ async function handlePayment(coins, usdPrice, btn) {
           localStorage.setItem('balance', newBalance);
           if (typeof syncWithServer === 'function') syncWithServer();
         } else {
-          alert('❌ Payment error: ' + (error || 'Unknown'));
+          showNotification('❌ Payment error: ' + (error || 'Unknown'));
         }
       }
       ws.close();
@@ -81,7 +81,7 @@ async function handlePayment(coins, usdPrice, btn) {
     ws.addEventListener('error', (e) => {
       clearTimeout(timeoutId);
       console.error('WS error:', e);
-      alert('❌ WebSocket error. Payment could not be confirmed.');
+      showNotification('❌ WebSocket error. Payment could not be confirmed.');
       ws.close();
     });
 
@@ -92,7 +92,7 @@ async function handlePayment(coins, usdPrice, btn) {
 
   } catch (err) {
     console.error('Payment flow error:', err);
-    alert('❌ Error in payment process.');
+    showNotification('❌ Error in payment process.');
     btn.disabled = false;
     btn.textContent = originalText;
   }
