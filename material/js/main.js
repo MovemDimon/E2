@@ -3,6 +3,19 @@ const body = document.body;
 const coinEl = document.getElementById('coin');
 const countEl = document.querySelector('h1');
 
+// ==== Fallback برای تست بدون وب‌اپ ====
+function applyWebAppFallback() {
+  const isTelegramWebApp = typeof Telegram !== 'undefined' && Telegram.WebApp?.initDataUnsafe;
+  if (!isTelegramWebApp) {
+    console.warn('⚠️ WebApp context not detected. Applying fallback...');
+    if (!localStorage.getItem('userId')) {
+      const fakeUserId = 'testuser_' + Math.floor(Math.random() * 100000);
+      localStorage.setItem('userId', fakeUserId);
+      localStorage.setItem('authToken', 'test-token');
+    }
+  }
+}
+
 // ==== Invite Tracking Helpers ====
 function incrementInviteCount(inviterId) {
   const selfId = localStorage.getItem('userId');
@@ -10,15 +23,12 @@ function incrementInviteCount(inviterId) {
   let invited = parseInt(localStorage.getItem('invitedFriends')) || 0;
   invited++;
   localStorage.setItem('invitedFriends', invited);
-  // Update invite task buttons if available
-  if (typeof updateInviteTaskStatus === 'function') {
-    updateInviteTaskStatus();
-  }
+  if (typeof updateInviteTaskStatus === 'function') updateInviteTaskStatus();
 }
 
 function registerReferral() {
   try {
-    const referrerId = Telegram.WebApp.initDataUnsafe?.start_param;
+    const referrerId = Telegram.WebApp?.initDataUnsafe?.start_param;
     if (referrerId && !localStorage.getItem('invitedBy')) {
       localStorage.setItem('invitedBy', referrerId);
       incrementInviteCount(referrerId);
@@ -49,7 +59,7 @@ function updatePowerProgress() {
   document.querySelector('.progress').style.width = `${(100 * power / total)}%`;
 }
 
-// Coin click (safe)
+// Coin click
 if (coinEl) {
   coinEl.addEventListener('click', e => {
     navigator.vibrate?.(5);
@@ -90,6 +100,7 @@ async function syncWithServer() {
   const userId = localStorage.getItem('userId');
   const authToken = localStorage.getItem('authToken');
   if (!userId || !authToken) return;
+
   const payload = {
     userId,
     invitedBy: localStorage.getItem('invitedBy') || null,
@@ -106,6 +117,7 @@ async function syncWithServer() {
       invite20: localStorage.getItem('invite20'),
     }
   };
+
   try {
     const res = await fetch('/data', {
       method: 'POST',
@@ -123,6 +135,7 @@ async function syncWithServer() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  applyWebAppFallback();
   initLocalStorageDefaults();
   registerReferral();
 
