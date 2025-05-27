@@ -1,4 +1,5 @@
 // ==== Task Configuration ====
+
 const TASK_CONFIG = {
   thresholds: {
     invite3: 3,
@@ -15,20 +16,21 @@ const TASK_CONFIG = {
 };
 
 // ==== Local State ====
+
 let balance = parseInt(localStorage.getItem('balance')) || 0;
 let invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
 
+// ==== Test Log ====
+console.log("✅ Task.js loaded");
+console.log("🔢 invitedFriends:", invitedFriends);
+console.log("💰 balance:", balance);
+
 // ==== Complete Invite Task ====
+
 function completeTask(taskName) {
-  alert(`🧪 Task Triggered: ${taskName}`);
+  alert("✅ completeTask triggered with: " + taskName);
 
-  let userId = localStorage.getItem('userId');
-  if (!userId) {
-    userId = "testuser123";
-    localStorage.setItem('userId', userId);
-    alert("🧪 userId was missing — testuser123 added.");
-  }
-
+  const userId = localStorage.getItem('userId') || "testUser123";
   if (!userId) {
     showNotification('⚠️ Please log in before claiming rewards.');
     return;
@@ -42,35 +44,36 @@ function completeTask(taskName) {
   const required = TASK_CONFIG.thresholds[taskName];
   const reward = TASK_CONFIG.rewards[taskName];
 
-  alert(`🧪 Invited Friends: ${invitedFriends}, Required: ${required}`);
-
   if (invitedFriends >= required) {
     balance += reward;
     localStorage.setItem('balance', balance);
     localStorage.setItem(taskName, 'true');
     updateBalance();
-    showNotification(`🎉 Congratulations! You received ${reward.toLocaleString()} coins.`);
+    showNotification(`🎉 You received ${reward.toLocaleString()} coins!`);
     if (typeof syncWithServer === 'function') syncWithServer();
   } else {
     const remaining = required - invitedFriends;
-    showNotification(`⚠️ You need to invite ${remaining} more friend${remaining === 1 ? '' : 's'} to claim this reward.`);
+    showNotification(`⚠️ Invite ${remaining} more friend${remaining === 1 ? '' : 's'} to claim this reward.`);
   }
 }
 
 // ==== Update Coin Display ====
+
 function updateBalance() {
   const el = document.getElementById('balance');
   if (el) el.textContent = balance.toLocaleString();
 }
 
-// ==== Increase Invite Count (for testing / use) ====
+// ==== Increase Invite Count (Test Mode) ====
+
 function inviteFriend() {
   invitedFriends++;
   localStorage.setItem('invitedFriends', invitedFriends);
   updateInviteTaskStatus();
 }
 
-// ==== Enable/Disable Task Buttons Based on Progress ====
+// ==== Enable/Disable Invite Buttons ====
+
 function updateInviteTaskStatus() {
   ['invite3', 'invite5', 'invite10', 'invite20'].forEach(key => {
     const btnId = `claim${key.charAt(0).toUpperCase() + key.slice(1)}`;
@@ -97,10 +100,11 @@ function updateInviteTaskStatus() {
     status.textContent =
       invitedFriends >= TASK_CONFIG.thresholds.invite3
         ? '✅ You have invited at least 3 friends.'
-        : `⚠️ Invite ${TASK_CONFIG.thresholds.invite3 - invitedFriends} more friend(s) to unlock rewards.`;
+        : `⚠️ Invite ${TASK_CONFIG.thresholds.invite3 - invitedFriends} more friend(s).`;
   }
 }
 
 // ==== Initial Setup ====
+
 updateBalance();
 updateInviteTaskStatus();
