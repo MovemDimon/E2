@@ -395,9 +395,6 @@ ___________________________________________________
             <span>BALANCE</span>
         </a>
     </nav>
-
-    <!-- Toast message -->
-    <div id="toast"></div>
                     
     <script src="/material/js/interactions.js" defer></script>                                
     <script src="/material/js/js.js"></script>
@@ -406,15 +403,5 @@ ___________________________________________________
     <script src="/material/js/payment.js"></script>              
     <script src="/material/js/toast.js"></script>
 
-    <script>
-        function showToast(message) {
-            const toast = document.getElementById('toast');
-            toast.textContent = message;
-            toast.style.display = 'block';
-            setTimeout(() => {
-                toast.style.display = 'none';
-            }, 3000); // Show for 3 seconds
-        }
-    </script>
   </body>
 </html>
