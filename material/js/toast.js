@@ -1,16 +1,25 @@
-function showNotification(message, type = 'success') {
-  const toast = document.getElementById('toast');
-  if (!toast) return alert(message);
+(function () {
+  let notifTimer;
 
-  toast.textContent = message;
-  toast.className = `toast ${type} show`;
+  window.showNotification = function (message, type = 'success') {
+    let box = document.querySelector('.notif-box');
 
-  clearTimeout(window._toastTimer);
-  window._toastTimer = setTimeout(() => {
-    toast.classList.remove('show');
-    toast.classList.add('hide');
-    setTimeout(() => {
-      toast.className = 'toast'; // Reset
-    }, 500);
-  }, 3000);
-}
+    if (!box) {
+      box = document.createElement('div');
+      box.className = 'notif-box';
+      document.body.appendChild(box);
+    }
+
+    box.textContent = message;
+    box.className = `notif-box ${type} show`;
+
+    clearTimeout(notifTimer);
+    notifTimer = setTimeout(() => {
+      box.classList.remove('show');
+      box.classList.add('hide');
+      setTimeout(() => {
+        box.remove(); // حذف کامل
+      }, 500);
+    }, 3000);
+  };
+})();
