@@ -1,5 +1,4 @@
 // ==== Task Configuration ====
-
 const TASK_CONFIG = {
   thresholds: {
     invite3: 3,
@@ -16,16 +15,22 @@ const TASK_CONFIG = {
 };
 
 // ==== Local State ====
-
 let balance = parseInt(localStorage.getItem('balance')) || 0;
 let invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
 
 // ==== Complete Invite Task ====
-
 function completeTask(taskName) {
-  const userId = localStorage.getItem('userId', "testuser123");
+  alert(`🧪 Task Triggered: ${taskName}`);
+
+  let userId = localStorage.getItem('userId');
   if (!userId) {
-  showNotification('⚠️ Please log in before claiming rewards.');
+    userId = "testuser123";
+    localStorage.setItem('userId', userId);
+    alert("🧪 userId was missing — testuser123 added.");
+  }
+
+  if (!userId) {
+    showNotification('⚠️ Please log in before claiming rewards.');
     return;
   }
 
@@ -36,6 +41,8 @@ function completeTask(taskName) {
 
   const required = TASK_CONFIG.thresholds[taskName];
   const reward = TASK_CONFIG.rewards[taskName];
+
+  alert(`🧪 Invited Friends: ${invitedFriends}, Required: ${required}`);
 
   if (invitedFriends >= required) {
     balance += reward;
@@ -51,14 +58,12 @@ function completeTask(taskName) {
 }
 
 // ==== Update Coin Display ====
-
 function updateBalance() {
   const el = document.getElementById('balance');
   if (el) el.textContent = balance.toLocaleString();
 }
 
 // ==== Increase Invite Count (for testing / use) ====
-
 function inviteFriend() {
   invitedFriends++;
   localStorage.setItem('invitedFriends', invitedFriends);
@@ -66,7 +71,6 @@ function inviteFriend() {
 }
 
 // ==== Enable/Disable Task Buttons Based on Progress ====
-
 function updateInviteTaskStatus() {
   ['invite3', 'invite5', 'invite10', 'invite20'].forEach(key => {
     const btnId = `claim${key.charAt(0).toUpperCase() + key.slice(1)}`;
@@ -98,6 +102,5 @@ function updateInviteTaskStatus() {
 }
 
 // ==== Initial Setup ====
-
 updateBalance();
 updateInviteTaskStatus();
