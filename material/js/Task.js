@@ -1,9 +1,31 @@
-function completeTask(taskName) {
-  alert("✅ دکمه invite3 کلیک شد و completeTask اجرا شد با مقدار: " + taskName);
+// ==== Task Configuration ====
 
-  const userId = localStorage.getItem('userId');
+const TASK_CONFIG = {
+  thresholds: {
+    invite3: 3,
+    invite5: 5,
+    invite10: 10,
+    invite20: 20,
+  },
+  rewards: {
+    invite3: 10000,
+    invite5: 20000,
+    invite10: 70000,
+    invite20: 200000,
+  },
+};
+
+// ==== Local State ====
+
+let balance = parseInt(localStorage.getItem('balance')) || 0;
+let invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
+
+// ==== Complete Invite Task ====
+
+function completeTask(taskName) {
+  const userId = localStorage.getItem('userId', "testuser123");
   if (!userId) {
-    showNotification('⚠️ Please log in before claiming rewards.');
+  showNotification('⚠️ Please log in before claiming rewards.');
     return;
   }
 
@@ -27,3 +49,55 @@ function completeTask(taskName) {
     showNotification(`⚠️ You need to invite ${remaining} more friend${remaining === 1 ? '' : 's'} to claim this reward.`);
   }
 }
+
+// ==== Update Coin Display ====
+
+function updateBalance() {
+  const el = document.getElementById('balance');
+  if (el) el.textContent = balance.toLocaleString();
+}
+
+// ==== Increase Invite Count (for testing / use) ====
+
+function inviteFriend() {
+  invitedFriends++;
+  localStorage.setItem('invitedFriends', invitedFriends);
+  updateInviteTaskStatus();
+}
+
+// ==== Enable/Disable Task Buttons Based on Progress ====
+
+function updateInviteTaskStatus() {
+  ['invite3', 'invite5', 'invite10', 'invite20'].forEach(key => {
+    const btnId = `claim${key.charAt(0).toUpperCase() + key.slice(1)}`;
+    const btn = document.getElementById(btnId);
+    if (btn) {
+      const threshold = TASK_CONFIG.thresholds[key];
+      const completed = localStorage.getItem(key) === 'true';
+
+      btn.disabled = invitedFriends < threshold || completed;
+
+      if (completed) {
+        btn.textContent = '✅ Claimed';
+      } else if (invitedFriends >= threshold) {
+        btn.textContent = '💎 Claim';
+      } else {
+        const remaining = threshold - invitedFriends;
+        btn.textContent = `⬜ ${remaining} more to unlock`;
+      }
+    }
+  });
+
+  const status = document.getElementById('inviteTaskStatus');
+  if (status) {
+    status.textContent =
+      invitedFriends >= TASK_CONFIG.thresholds.invite3
+        ? '✅ You have invited at least 3 friends.'
+        : `⚠️ Invite ${TASK_CONFIG.thresholds.invite3 - invitedFriends} more friend(s) to unlock rewards.`;
+  }
+}
+
+// ==== Initial Setup ====
+
+updateBalance();
+updateInviteTaskStatus();
