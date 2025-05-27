@@ -207,31 +207,31 @@
         <div class="package-row">
             <img src="/material/images/logo.png" alt="Logo">
             <span>10,000</span>
-            <button class="buy-btn" onclick="handlePayment(10000, 1)">1$</button>
+            <button class="buy-btn" onclick="handlePayment(10000, 1, this)">1$</button>
         </div>
         
         <div class="package-row">
             <img src="/material/images/logo.png" alt="Logo">
             <span>80,000</span>
-            <button class="buy-btn" onclick="handlePayment(80000, 5)">5$</button>
+            <button class="buy-btn" onclick="handlePayment(80000, 5, this)">5$</button>
         </div>
         
         <div class="package-row">
             <img src="/material/images/logo.png" alt="Logo">
             <span>200,000</span>
-            <button class="buy-btn" onclick="handlePayment(200000, 10)">10$</button>
+            <button class="buy-btn" onclick="handlePayment(200000, 10, this)">10$</button>
         </div>
         
         <div class="package-row">
             <img src="/material/images/logo.png" alt="Logo">
             <span>1,000,000</span>
-            <button class="buy-btn" onclick="handlePayment(1000000, 50)">50$</button>
+            <button class="buy-btn" onclick="handlePayment(1000000, 50, this)">50$</button>
         </div>
         
         <div class="package-row">
             <img src="/material/images/logo.png" alt="Logo">
             <span>3,000,000</span>
-            <button class="buy-btn" onclick="handlePayment(3000000, 100)">100$</button>
+            <button class="buy-btn" onclick="handlePayment(3000000, 100, this)">100$</button>
         </div>
         
         <div class="payment-footer">Payment with various digital currencies</div>
@@ -253,7 +253,7 @@
                 </div>
             </div>
         </div>
-        <button class="task-button" id="claimInvite3" onclick="completeTask('invite3')" disabled>💎 claim</button>
+        <button class="task-button" id="claimInvite3" onclick="completeInviteTask('invite3')" disabled>💎 claim</button>
     </div>
 
     <div class="task">
@@ -269,7 +269,7 @@
                 </div>
             </div>
         </div>
-        <button class="task-button" id="claimInvite5" onclick="completeTask('invite5')" disabled>💎 claim</button>
+        <button class="task-button" id="claimInvite5" onclick="completeInviteTask('invite5')" disabled>💎 claim</button>
     </div>
 
     <div class="task">
@@ -285,7 +285,7 @@
                 </div>
             </div>
         </div>
-        <button class="task-button" id="claimInvite10" onclick="completeTask('invite10')" disabled>💎 claim</button>
+        <button class="task-button" id="claimInvite10" onclick="completeInviteTask('invite10')" disabled>💎 claim</button>
     </div>
 
     <div class="task">
@@ -301,7 +301,7 @@
                 </div>
             </div>
         </div>
-        <button class="task-button" id="claimInvite20" onclick="completeTask('invite20')" disabled>💎 claim</button>
+        <button class="task-button" id="claimInvite20" onclick="completeInviteTask('invite20')" disabled>💎 claim</button>
     </div>
 </div>
 
@@ -319,7 +319,7 @@
                     </div>
                 </div>
             </div>
-            <button class="task-button" onclick="completeTask(100, 'https://youtube.com/@daimoniumm?si=0XiFfn5ENMV063Bj')">💎 claim</button>
+            <button class="task-button" onclick="onYouTubeSubscribeClick()">💎 claim</button>
         </div>
     
         <div class="task-container">
