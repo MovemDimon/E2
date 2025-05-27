@@ -1,3 +1,7 @@
+if (/Mobi|Android/i.test(navigator.userAgent)) {
+  alert("📱 فایل Task.js در موبایل لود شد!");
+}
+
 // ==== Task Configuration ====
 
 const TASK_CONFIG = {
