@@ -1,34 +1,39 @@
-// Shared Balance
-let balance = +localStorage.getItem('balance') || 0;
-
-function updateBalance() {
-  const el = document.getElementById('balance');
-  if (el) el.textContent = balance.toLocaleString();
+// تابع به‌روزرسانی نمایش سکه‌ها
+function updateCoinDisplay() {
+  const coins = parseInt(localStorage.getItem('coins')) || 0;
+  const coinDisplay = document.getElementById('coinCount');
+  if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
 }
-updateBalance();
+
+// مقداردهی اولیه
+updateCoinDisplay();
 
 /**
- * One-Time Task Completion
+ * ثبت تکمیل کار یک‌باره
  */
 function completeOneTimeTask(taskKey, reward) {
   if (localStorage.getItem(taskKey) === 'done') {
-    return showNotification('⚠️ This task has already been completed.');
+    return showNotification('⚠️ این کار قبلاً انجام شده است');
   }
 
-  balance += reward;
-  localStorage.setItem('balance', balance);
+  // افزایش سکه‌ها
+  let coins = parseInt(localStorage.getItem('coins')) || 0;
+  coins += reward;
+  localStorage.setItem('coins', coins);
   localStorage.setItem(taskKey, 'done');
-  updateBalance();
-  showNotification(`🎉 Congrats! You've earned ${reward.toLocaleString()} coins.`);
+  
+  // به‌روزرسانی UI
+  updateCoinDisplay();
+  showNotification(`🎉 تبریک! ${reward.toLocaleString()} سکه دریافت کردید`);
 }
 
 /**
- * Generic Server Verification
+ * تأیید اشتراک از سرور
  */
 async function verifySubscribe(apiPath, storageKey) {
   const userId = localStorage.getItem(storageKey);
   if (!userId) {
-    showNotification('⚠️ Please log in first.');
+    showNotification('⚠️ لطفاً ابتدا وارد شوید');
     return false;
   }
 
@@ -40,16 +45,15 @@ async function verifySubscribe(apiPath, storageKey) {
     });
 
     const { ok } = await res.json();
-    if (!ok) showNotification('⚠️ You haven’t completed this task yet.');
+    if (!ok) showNotification('⚠️ هنوز این کار را انجام نداده‌اید');
     return ok;
   } catch {
-    showNotification('❌ Failed to connect to the server.');
+    showNotification('❌ خطا در اتصال به سرور');
     return false;
   }
 }
 
-// === Click Handlers ===
-
+// === کنترل‌کننده‌های کلیک ===
 async function onTelegramSubscribeClick() {
   if (await verifySubscribe('/api/verify-telegram-subscribe', 'telegramUserId')) {
     completeOneTimeTask('subscribeTelegram', 100);
