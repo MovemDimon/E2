@@ -8,7 +8,6 @@ const paymentSchema = new mongoose.Schema({
   status:      { type: String, required: true, enum: ['success','failure'] },
   errorMsg:    { type: String, default: '' },
   timestamp:   { type: Date,   default: () => new Date() },
-  newBalance:  { type: Number, required: true }
 }, { collection: 'payments', timestamps: false });
 
 export default mongoose.model('Payment', paymentSchema);
