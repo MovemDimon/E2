@@ -3,11 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
   const linkInput = document.getElementById('link');
   const feedback = document.getElementById('copyFeedback');
 
-  const userId = localStorage.getItem('userId') || 'guest';
+  // بررسی وجود کاربر
+  const userId = localStorage.getItem('userId');
+  if (!userId) {
+    showNotification('⚠️ لطفاً ابتدا وارد شوید');
+    return;
+  }
+
   const inviteLink = `https://t.me/Daimonium_bot?start=${encodeURIComponent(userId)}`;
   linkInput.value = inviteLink;
 
   async function copyAndShare() {
+    if (!copyButton) return;
     copyButton.disabled = true;
 
     try {
@@ -17,10 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
       document.execCommand('copy');
     }
 
-    feedback.textContent = '✅ Link copied!';
+    feedback.textContent = '✅ لینک کپی شد!';
     feedback.classList.add('visible');
 
-    const shareText = 'Join this awesome Telegram mini-app using my link!';
+    const shareText = 'به بازی سکه جمع کن بپیوندید!';
     const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`;
     window.open(shareUrl, '_blank');
 
@@ -30,5 +37,5 @@ document.addEventListener('DOMContentLoaded', () => {
     }, 2000);
   }
 
-  copyButton.addEventListener('click', copyAndShare);
+  if (copyButton) copyButton.addEventListener('click', copyAndShare);
 });
