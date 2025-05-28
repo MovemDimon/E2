@@ -1,7 +1,7 @@
 // ========== Initialization ==========
 const body = document.body;
 const coinEl = document.getElementById('coin');
-const countEl = document.querySelector('h1');
+const countEl = document.getElementById('coinCount');
 
 // ==== Fallback برای تست بدون وب‌اپ ====
 function applyWebAppFallback() {
@@ -47,16 +47,17 @@ function initLocalStorageDefaults() {
 }
 
 function renderStats() {
-  countEl.textContent = Number(localStorage.getItem('coins')).toLocaleString();
-  document.getElementById('total').textContent = localStorage.getItem('total');
-  document.getElementById('power').textContent = localStorage.getItem('power');
+  if (countEl) countEl.textContent = Number(localStorage.getItem('coins')).toLocaleString();
+  document.getElementById('total')?.textContent = localStorage.getItem('total');
+  document.getElementById('power')?.textContent = localStorage.getItem('power');
   updatePowerProgress();
 }
 
 function updatePowerProgress() {
   const power = +localStorage.getItem('power');
   const total = +localStorage.getItem('total');
-  document.querySelector('.progress').style.width = `${(100 * power / total)}%`;
+  const progressEl = document.querySelector('.progress');
+  if (progressEl) progressEl.style.width = `${(100 * power / total)}%`;
 }
 
 // Coin click
@@ -105,7 +106,6 @@ async function syncWithServer() {
     userId,
     invitedBy: localStorage.getItem('invitedBy') || null,
     invitedFriends: +localStorage.getItem('invitedFriends') || 0,
-    balance: +localStorage.getItem('balance') || 0,
     coins: localStorage.getItem('coins'),
     total: localStorage.getItem('total'),
     power: localStorage.getItem('power'),
@@ -131,6 +131,7 @@ async function syncWithServer() {
     localStorage.setItem('lastSyncDate', new Date().toISOString());
   } catch (e) {
     console.error('Sync Error:', e);
+    showNotification('⚠️ خطا در همگام‌سازی با سرور');
   }
 }
 
