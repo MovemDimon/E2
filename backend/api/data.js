@@ -21,14 +21,13 @@ router.post('/', async (req, res) => {
         status:     data.status,
         errorMsg:   data.errorMsg || '',
         timestamp:  data.timestamp ? new Date(data.timestamp) : new Date(),
-        newBalance: data.newBalance
       });
       await payment.save();
 
       // ۲. به‌روزرسانی موجودی کاربر
       await User.findOneAndUpdate(
         { userId: data.userId },
-        { balance: data.newBalance },
+        { coins: data.coins },
         { upsert: true }
       );
 
@@ -37,14 +36,14 @@ router.post('/', async (req, res) => {
 
     // اگر سند از نوع وضعیت کاربر عادی است
     else {
-      const { userId, balance, invitedFriends } = data;
-      if (typeof balance !== 'number' || typeof invitedFriends !== 'number') {
+      const { userId, coins, invitedFriends } = data;
+      if (typeof coins !== 'number' || typeof invitedFriends !== 'number') {
         return res.status(400).json({ error: 'balance and invitedFriends must be numbers' });
       }
 
       const user = await User.findOneAndUpdate(
         { userId },
-        { balance, invitedFriends },
+        { coins, invitedFriends },
         { upsert: true, new: true }
       );
 
