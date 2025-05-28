@@ -1,7 +1,3 @@
-if (/Mobi|Android/i.test(navigator.userAgent)) {
-  alert("📱 فایل subscribe.js در موبایل لود شد!");
-}
-
 // Shared Balance
 let balance = +localStorage.getItem('balance') || 0;
 
