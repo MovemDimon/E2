@@ -1,3 +1,20 @@
+if (typeof TASK_CONFIG === 'undefined') {
+  var TASK_CONFIG = {
+    thresholds: {
+      invite3: 3,
+      invite5: 5,
+      invite10: 10,
+      invite20: 20,
+    },
+    rewards: {
+      invite3: 10000,
+      invite5: 20000,
+      invite10: 70000,
+      invite20: 200000,
+    },
+  };
+}
+
 function completeTask(taskName) {
   try {
     const userId = localStorage.getItem('userId') || "testuser123";
