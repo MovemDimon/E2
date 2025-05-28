@@ -5,7 +5,7 @@ function updateCoinDisplay() {
   if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
 }
 
-// به‌روزرسانی هنگام تغییر مقدار سکه‌ها
+// به‌روزرسانی هنگام تغییر مقدار سکه‌هاست
 window.addEventListener('storage', ({ key }) => {
   if (key === 'coins') updateCoinDisplay();
 });
