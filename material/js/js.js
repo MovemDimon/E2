@@ -1,36 +1,36 @@
-let balance = parseInt(localStorage.getItem('balance')) || 0;
-
-window.addEventListener('storage', ({ key, newValue }) => {
-  if (key === 'balance') {
-    balance = parseInt(newValue) || 0;
-    updateBalance();
-  }
-});
-
-function updateBalance() {
-  const el = document.getElementById('balance');
-  el && (el.textContent = balance.toLocaleString());
+// تابع به‌روزرسانی نمایش سکه‌ها
+function updateCoinDisplay() {
+  const coins = parseInt(localStorage.getItem('coins')) || 0;
+  const coinDisplay = document.getElementById('coinCount');
+  if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
 }
 
+// به‌روزرسانی هنگام تغییر مقدار سکه‌ها
+window.addEventListener('storage', ({ key }) => {
+  if (key === 'coins') updateCoinDisplay();
+});
+
+// مقداردهی اولیه
+updateCoinDisplay();
+
 /**
- * Registers a daily task reward
- * @param {string} taskUrlKey - Key to store ISO date
- * @param {number} reward - Reward amount
- * @param {string} url - URL to open
+ * ثبت تکمیل کار روزانه
  */
 function completeTaskUrl(taskUrl, reward, url, taskUrlKey) {
   const today = new Date().toISOString().split('T')[0];
 
   if (localStorage.getItem(taskUrlKey) === today) {
-    return showNotification('⚠️ This task has already been completed today.');
+    return showNotification('⚠️ این کار امروز قبلاً انجام شده است');
   }
 
-  balance += reward;
-  localStorage.setItem('balance', balance);
+  // افزایش سکه‌ها
+  let coins = parseInt(localStorage.getItem('coins')) || 0;
+  coins += reward;
+  localStorage.setItem('coins', coins);
   localStorage.setItem(taskUrlKey, today);
-  updateBalance();
-
+  
+  // به‌روزرسانی UI
+  updateCoinDisplay();
   window.open(url, '_blank');
-
-  showNotification(`🎉 Congrats! You've earned ${reward.toLocaleString()} coins.`);
+  showNotification(`🎉 تبریک! ${reward.toLocaleString()} سکه دریافت کردید`);
 }
