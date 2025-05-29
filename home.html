@@ -13,42 +13,45 @@
   <link rel="stylesheet" href="/material/css/animations.css" />
 
   <style>
-    body {
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      overflow: hidden;
+      box-sizing: border-box;
       font-family: Arial, sans-serif;
       background-color: #000;
       color: #fff;
-      margin: 0;
-      padding: 0;
+    }
+
+    main {
+      flex: 1;
       min-height: 100vh;
       display: flex;
       flex-direction: column;
-    }
-
-    html, body {
-    margin: 0;
-    padding: 0;
-    height: 100vh; /* استفاده از کل ارتفاع صفحه */
-    overflow: hidden; /* جلوگیری از اسکرول */
-    box-sizing: border-box;
-  }
-
-  main {
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start; /* یا center برای وسط‌چین کامل */
-    align-items: center;
-    padding: 20px 10px;
-    } 
-    
-    main {
-      flex: 1;
+      justify-content: flex-start;
+      align-items: center;
+      padding-top: 10px;
     }
 
     #balance-container {
-      margin: 20px;
+      margin: 10px;
       font-size: 18px;
       text-align: center;
+    }
+
+    #coinDollarRange {
+      font-size: 20px;
+      font-weight: 700;
+      color: #bbb;
+      margin-top: 8px;
+      text-align: center;
+      letter-spacing: 0.5px;
+      opacity: 0.9;
+    }
+
+    #coinDollarRange span {
+      font-family: 'Arial Black', sans-serif;
     }
 
     .task-container {
@@ -160,24 +163,16 @@
 
 <body>
   <main>
-    <br><br>
     <div id="balance-container">
       <h2><b></b></h2>
       <span id="coinCount">0</span> 💎 total Diamonium
     </div>
-    
-    <div id="coinDollarRange" style="
-  font-size: 20px;
-  font-weight: 700;
-  color: #bbb;
-  margin-top: 8px;
-  text-align: center;
-">
-  <span id="minUsd" style="color: #d32f2f;">$0.00</span>
-  <span style="margin: 0 8px; color: #888;">≈</span>
-  <span id="maxUsd" style="color: #2e7d32;">$0.00</span>
-</div>
 
+    <div id="coinDollarRange">
+      <span id="minUsd" style="color: #d32f2f;">$0.00</span>
+      <span style="margin: 0 8px; color: #888;">≈</span>
+      <span id="maxUsd" style="color: #2e7d32;">$0.00</span>
+    </div>
 
     <div class="task-container">
       <div class="task">
@@ -242,7 +237,7 @@
       <span>BALANCE</span>
     </a>
   </nav>
-  
+
   <script src="material/js/toast.js"></script>
   <script src="/material/js/interactions.js" defer></script>
   <script src="/material/js/js.js"></script>
