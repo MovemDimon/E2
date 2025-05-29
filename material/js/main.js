@@ -47,7 +47,7 @@ function initLocalStorageDefaults() {
 }
 
 function renderStats() {
-  if (countEl) countEl.textContent = Number(localStorage.getItem('coins')).toLocaleString();
+  if (countEl) countEl.textContent = Number(localStorage.getItem('coins')).toLocaleString('en-US');
   document.getElementById('total')?.textContent = localStorage.getItem('total');
   document.getElementById('power')?.textContent = localStorage.getItem('power');
   updatePowerProgress();
