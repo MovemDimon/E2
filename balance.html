@@ -2,15 +2,16 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Complete Tasks</title>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
   <link rel="stylesheet" href="/material/css/styles.css">
-  <link rel="stylesheet" href="/material/css/font.css">
-  <link rel="stylesheet" href="/material/css/st.css">
-  <link rel="stylesheet" href="/material/css/animations.css">
+  <link rel="stylesheet" href="/material/css/font.css" />
+  <link rel="stylesheet" href="/material/css/st.css" />
+  <link rel="stylesheet" href="/material/css/animations.css" />
 
   <style>
+    /* --- Global & Layout --- */
     html, body {
       margin: 0;
       padding: 0;
@@ -21,22 +22,29 @@
       color: #fff;
       font-family: Arial, sans-serif;
     }
-    /* اینجا justify-content تغییر کرد */
     main {
       flex: 1;
       display: flex;
       flex-direction: column;
-      justify-content: space-between; /* ← محتوا را بین بالا و پایین پخش می‌کند */
+      justify-content: flex-start;
       align-items: center;
       padding: 20px 10px;
       box-sizing: border-box;
-      min-height: calc(100vh - 60px);
+      min-height: calc(100vh - 60px); /* جا برای nav پایینی */
       overflow: hidden;
     }
 
+    /* --- Coin & Balance --- */
     #coinCount-container {
       margin-bottom: 20px;
       text-align: center;
+    }
+    #coinCount-container h2 {
+      margin: 0;
+    }
+    #coinCount {
+      font-size: 24px;
+      font-weight: bold;
     }
     #coinDollarRange {
       font-size: 20px;
@@ -46,9 +54,11 @@
       text-align: center;
     }
 
+    /* --- Task List --- */
     .task-container {
-      width: 80%;
+      margin: 10px auto;
       max-width: 600px;
+      width: 80%;
     }
     .task {
       margin: 10px 0;
@@ -105,6 +115,7 @@
       background-color: #a2aaa0;
     }
 
+    /* --- Responsive --- */
     @media (max-width: 600px) {
       .task-container {
         width: 100%;
@@ -132,13 +143,12 @@
       </div>
     </div>
 
-    <div>
-      <h2><b>2025.7.25</b></h2>
-      <a href="detail.html" class="nav-item">
-        <i class="fas fa-info-circle"></i>
-        <span>DETAILS</span>
-      </a>
-    </div>
+    <h2><b>2025.7.25</b></h2>
+
+    <a href="detail.html" class="nav-item"> 
+      <i class="fas fa-info-circle"></i>
+      <span>DETAILS</span>
+    </a>
 
     <div class="task-container">
       <div class="task">
@@ -165,19 +175,24 @@
 
   <nav class="bottom-nav">
     <a href="home.html" class="nav-item">
-      <i class="fas fa-home"></i><span>HOME</span>
+      <i class="fas fa-home"></i>
+      <span>HOME</span>
     </a>
     <a href="leaderboard.html" class="nav-item">
-      <i class="fas fa-trophy"></i><span>LEADERBOARD</span>
+      <i class="fas fa-trophy"></i>
+      <span>LEADERBOARD</span>
     </a>
     <a href="invite-friends.html" class="nav-item">
-      <i class="fas fa-user-friends"></i><span>FRIENDS</span>
+      <i class="fas fa-user-friends"></i>
+      <span>FRIENDS</span>
     </a>
     <a href="task.html" class="nav-item">
-      <i class="fas fa-tasks"></i><span>TASKS</span>
+      <i class="fas fa-tasks"></i>
+      <span>TASKS</span>
     </a>
     <a href="balance.html" class="nav-item">
-      <i class="fas fa-wallet"></i><span>BALANCE</span>
+      <i class="fas fa-wallet"></i>
+      <span>BALANCE</span>
     </a>
   </nav>
 
