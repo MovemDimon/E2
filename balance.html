@@ -1,9 +1,8 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Complete Tasks</title>
 
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
@@ -17,34 +16,31 @@
       margin: 0;
       padding: 0;
       height: 100vh;
+      overflow: hidden;
+      box-sizing: border-box;
       background-color: #000;
       color: #fff;
       font-family: Arial, sans-serif;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      box-sizing: border-box;
-      overflow: hidden;
+      text-align: center;
     }
 
     main {
-      flex: 1;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      justify-content: flex-start;
       align-items: center;
       padding: 20px 10px;
-      overflow-y: auto;
     }
 
-    #coinCount-container {
-      text-align: center;
-      margin-top: 20px;
+    #balance-container {
+      margin: 20px;
+      font-size: 18px;
     }
 
     .task-container {
       margin: 10px auto;
       max-width: 600px;
-      width: 100%;
     }
 
     .task {
@@ -58,7 +54,7 @@
       background-color: #333030;
       box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
       transition: transform 0.3s ease;
-      width: 90%;
+      width: 80%;
     }
 
     .task:hover {
@@ -97,9 +93,8 @@
       font-size: 18px;
     }
 
-    .task-button,
-    .task button {
-      background-color: #fff;
+    .task-button {
+      background-color: #ffffff;
       color: #000;
       border: none;
       padding: 10px 20px;
@@ -109,23 +104,8 @@
       transition: background-color 0.3s ease;
     }
 
-    .task-button:hover,
-    .task button:hover {
+    .task-button:hover {
       background-color: #a2aaa0;
-    }
-
-    nav.bottom-nav {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background-color: #111;
-      padding: 10px 0;
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      border-top: 1px solid #333;
-      z-index: 1000;
     }
 
     .nav-item {
@@ -142,7 +122,21 @@
       margin-bottom: 3px;
     }
 
+    nav.bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      background: #111;
+      display: flex;
+      justify-content: space-around;
+      padding: 10px 0;
+    }
+
     @media (max-width: 600px) {
+      .task-container {
+        max-width: 100%;
+      }
+
       .task-button {
         padding: 10px 15px;
         font-size: 14px;
@@ -161,7 +155,13 @@
       <h2><b></b></h2>
       <span id="coinCount">0</span> 💎 your total Diamonium
 
-      <div id="coinDollarRange" style="font-size: 20px; font-weight: 700; color: #bbb; margin-top: 8px;">
+      <div id="coinDollarRange" style="
+        font-size: 20px;
+        font-weight: 700;
+        color: #bbb;
+        margin-top: 8px;
+        text-align: center;
+      ">
         <span id="minUsd" style="color: #d32f2f;">$0.00</span>
         <span style="margin: 0 8px; color: #888;">→</span>
         <span id="maxUsd" style="color: #2e7d32;">$0.00</span>
@@ -170,7 +170,7 @@
 
     <h2><b>2025.7.25</b></h2>
 
-    <a href="detail.html" class="nav-item" style="margin: 20px 0;">
+    <a href="detail.html" class="nav-item">
       <i class="fas fa-info-circle"></i>
       <span>DETAILS</span>
     </a>
@@ -192,9 +192,7 @@
         <button onclick="window.location.href='wat.html'">CONNECT</button>
       </div>
 
-      <div style="text-align: center; margin-top: 20px;">
-        <img src="/material/images/logo.png" width="50%">
-      </div>
+      <img src="/material/images/logo.png" width="50%" style="margin-top: 20px;">
     </div>
   </main>
 
@@ -226,5 +224,4 @@
   <script src="/material/js/price-range.js"></script>
   <script src="/material/js/main.js"></script>
 </body>
-
 </html>
