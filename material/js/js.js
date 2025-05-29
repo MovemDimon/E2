@@ -2,7 +2,7 @@
 function updateCoinDisplay() {
   const coins = parseInt(localStorage.getItem('coins')) || 0;
   const coinDisplay = document.getElementById('coinCount');
-  if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
+  if (coinDisplay) coinDisplay.textContent = coins.toLocaleString('en-US');
 }
 
 // به‌روزرسانی هنگام تغییر مقدار سکه‌هاست
