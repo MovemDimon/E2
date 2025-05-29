@@ -67,9 +67,9 @@ async function handlePayment(coins, usdPrice, btn) {
         const { newBalance, error } = msg.data;
         if (newBalance != null) {
           // به‌روزرسانی موجودی
-          const balanceEl = document.getElementById('balance');
-          if (balanceEl) balanceEl.textContent = newBalance.toLocaleString();
-          localStorage.setItem('balance', newBalance);
+          const coins = document.getElementById('coins');
+          if (coins) coins.textContent = coins.toLocaleString('en-US');
+          localStorage.setItem('coins', coins);
           if (typeof syncWithServer === 'function') syncWithServer();
         } else {
           showNotification('❌ Payment error: ' + (error || 'Unknown'));
