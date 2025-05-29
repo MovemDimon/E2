@@ -2,7 +2,7 @@
 function updateCoinDisplay() {
   const coins = parseInt(localStorage.getItem('coins')) || 0;
   const coinDisplay = document.getElementById('coinCount');
-  if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
+  if (coinDisplay) coinDisplay.textContent = coins.toLocaleString('en-US');
 }
 
 // مقداردهی اولیه
@@ -24,7 +24,7 @@ function completeOneTimeTask(taskKey, reward) {
   
   // به‌روزرسانی UI
   updateCoinDisplay();
-  showNotification(`🎉 تبریک! ${reward.toLocaleString()} سکه دریافت کردید`);
+  showNotification(`🎉 تبریک! ${reward.toLocaleString('en-US')} سکه دریافت کردید`);
 }
 
 /**
@@ -62,12 +62,12 @@ async function onTelegramSubscribeClick() {
 
 async function onYouTubeSubscribeClick() {
   if (await verifySubscribe('/api/verify-youtube-subscribe', 'youtubeAccessToken')) {
-    completeOneTimeTask('subscribeYouTube', 150);
+    completeOneTimeTask('subscribeYouTube', 100);
   }
 }
 
 async function onInstagramFollowClick() {
   if (await verifySubscribe('/api/verify-instagram-follow', 'instagramAccessToken')) {
-    completeOneTimeTask('followInstagram', 150);
+    completeOneTimeTask('followInstagram', 100);
   }
 }
