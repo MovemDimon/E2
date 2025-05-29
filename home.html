@@ -24,6 +24,23 @@
       flex-direction: column;
     }
 
+    html, body {
+    margin: 0;
+    padding: 0;
+    height: 100vh; /* استفاده از کل ارتفاع صفحه */
+    overflow: hidden; /* جلوگیری از اسکرول */
+    box-sizing: border-box;
+  }
+
+  main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* یا center برای وسط‌چین کامل */
+    align-items: center;
+    padding: 20px 10px;
+    } 
+    
     main {
       flex: 1;
     }
