@@ -17,14 +17,14 @@ const TASK_CONFIG = {
 // ==== وضعیت محلی ====
 let invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
 
-// ==== تابع به‌روزرسانی نمایش سکه‌ها ====
+// ==== به‌روزرسانی نمایش سکه‌ها ====
 function updateCoinDisplay() {
   const coins = parseInt(localStorage.getItem('coins')) || 0;
   const coinDisplay = document.getElementById('coinCount');
   if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
 }
 
-// ==== تکمیل کار دعوت ====
+// ==== تکمیل تسک دعوت ====
 async function completeTask(taskName) {
   const userId = localStorage.getItem('userId');
   if (!userId) {
@@ -76,7 +76,7 @@ async function completeTask(taskName) {
   if (typeof syncWithServer === 'function') syncWithServer();
 }
 
-// ==== به‌روزرسانی وضعیت دکمه‌ها ====
+// ==== فقط غیرفعال‌سازی دکمه‌ها در صورت دریافت جایزه ====
 function updateInviteTaskStatus() {
   ['invite3', 'invite5', 'invite10', 'invite20'].forEach(key => {
     const btnId = `claim${key.charAt(0).toUpperCase() + key.slice(1)}`;
@@ -84,7 +84,7 @@ function updateInviteTaskStatus() {
     if (btn) {
       const completed = localStorage.getItem(key) === 'true';
       btn.disabled = completed;
-      btn.textContent = completed ? '✅ دریافت شد' : '💎 دریافت جایزه';
+      // ظاهر دکمه به هیچ عنوان تغییر نکند
     }
   });
 
