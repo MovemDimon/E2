@@ -116,8 +116,21 @@
 <body>
     <br>
 
-    <div id="balance-container"><h2><b>  </b></h2><BR>
-        <span id="balance">0</span> 💎 your total Diamonium
+    <div id="coinCount-container"><h2><b>  </b></h2><BR>
+        <span id="coinCount">0</span> 💎 your total Diamonium
+        
+        <div id="coinDollarRange" style="
+  font-size: 20px;
+  font-weight: 700;
+  color: #bbb;
+  margin-top: 8px;
+  text-align: center;
+">
+  <span id="minUsd" style="color: #d32f2f;">$0.00</span>
+  <span style="margin: 0 8px; color: #888;">→</span>
+  <span id="maxUsd" style="color: #2e7d32;">$0.00</span>
+</div>
+
         <br>    <br>
     </div><h2><b>2025.7.25</b></h2>
    
@@ -176,6 +189,7 @@
         
     <script src="/material/js/interactions.js" defer></script>
     <script src="/material/js/js.js"></script>
+    <script src="/material/js/price-range.js"></script>    
     <script src="/material/js/main.js"></script>  
 </body><div class="bottom-padding"></div>
 </html>
