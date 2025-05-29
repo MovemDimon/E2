@@ -40,14 +40,19 @@ async function completeTask(taskName) {
   const required = TASK_CONFIG.thresholds[taskName];
   const reward = TASK_CONFIG.rewards[taskName];
 
-  // تأیید سروری قبل از اعطای جایزه
+  if (invitedFriends < required) {
+    const remaining = required - invitedFriends;
+    showNotification(`⚠️ برای دریافت جایزه باید ${remaining} دوست${remaining === 1 ? '' : 'ان'} دیگر دعوت کنید`);
+    return;
+  }
+
   try {
     const res = await fetch('/verify-invites', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ task: taskName, userId })
+      body: JSON.stringify({ task: taskName, userId }),
     });
-    
+
     const { valid } = await res.json();
     if (!valid) {
       showNotification('⚠️ تأیید سرور انجام نشد');
@@ -58,42 +63,28 @@ async function completeTask(taskName) {
     return;
   }
 
-  if (invitedFriends >= required) {
-    // افزایش سکه‌ها
-    let coins = parseInt(localStorage.getItem('coins')) || 0;
-    coins += reward;
-    localStorage.setItem('coins', coins);
-    localStorage.setItem(taskName, 'true');
-    
-    // به‌روزرسانی UI
-    updateCoinDisplay();
-    showNotification(`🎉 تبریک! ${reward.toLocaleString()} سکه دریافت کردید`);
-    if (typeof syncWithServer === 'function') syncWithServer();
-  } else {
-    const remaining = required - invitedFriends;
-    showNotification(`⚠️ برای دریافت جایزه باید ${remaining} دوست${remaining === 1 ? '' : 'ان'} دیگر دعوت کنید`);
-  }
+  // اعطای جایزه
+  let coins = parseInt(localStorage.getItem('coins')) || 0;
+  coins += reward;
+  localStorage.setItem('coins', coins);
+  localStorage.setItem(taskName, 'true');
+
+  updateCoinDisplay();
+  updateInviteTaskStatus();
+  showNotification(`🎉 تبریک! ${reward.toLocaleString()} سکه دریافت کردید`);
+
+  if (typeof syncWithServer === 'function') syncWithServer();
 }
 
-// ==== به‌روزرسانی وضعیت کارها ====
+// ==== به‌روزرسانی وضعیت دکمه‌ها ====
 function updateInviteTaskStatus() {
   ['invite3', 'invite5', 'invite10', 'invite20'].forEach(key => {
     const btnId = `claim${key.charAt(0).toUpperCase() + key.slice(1)}`;
     const btn = document.getElementById(btnId);
     if (btn) {
-      const threshold = TASK_CONFIG.thresholds[key];
       const completed = localStorage.getItem(key) === 'true';
-
-      btn.disabled = invitedFriends < threshold || completed;
-
-      if (completed) {
-        btn.textContent = '✅ دریافت شد';
-      } else if (invitedFriends >= threshold) {
-        btn.textContent = '💎 دریافت جایزه';
-      } else {
-        const remaining = threshold - invitedFriends;
-        btn.textContent = `⬜ ${remaining} دعوت دیگر`;
-      }
+      btn.disabled = completed;
+      btn.textContent = completed ? '✅ دریافت شد' : '💎 دریافت جایزه';
     }
   });
 
@@ -106,5 +97,7 @@ function updateInviteTaskStatus() {
 }
 
 // ==== راه‌اندازی اولیه ====
-updateCoinDisplay();
-updateInviteTaskStatus();
+document.addEventListener('DOMContentLoaded', () => {
+  updateCoinDisplay();
+  updateInviteTaskStatus();
+});
