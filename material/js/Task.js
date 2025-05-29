@@ -21,7 +21,7 @@ let invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
 function updateCoinDisplay() {
   const coins = parseInt(localStorage.getItem('coins')) || 0;
   const coinDisplay = document.getElementById('coinCount');
-  if (coinDisplay) coinDisplay.textContent = coins.toLocaleString();
+  if (coinDisplay) coinDisplay.textContent = coins.toLocaleString('en-US');
 }
 
 // ==== تکمیل تسک دعوت ====
