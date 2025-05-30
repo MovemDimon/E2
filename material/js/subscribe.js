@@ -1,6 +1,13 @@
+// ░█████╗░░█████╗░██╗███╗░░██╗███████╗
+// ██╔══██╗██╔══██╗██║████╗░██║██╔════╝
+// ██║░░╚═╝██║░░██║██║██╔██╗██║█████╗░░
+// ██║░░██╗██║░░██║██║██║╚████║██╔══╝░░
+// ╚█████╔╝╚█████╔╝██║██║░╚███║███████╗
+// ░╚════╝░░╚════╝░╚═╝╚═╝░░╚══╝╚══════╝
+
 // Constants
-const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/channel/UCxxxxxxxxxxxxxxxxx';
-const INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/yourpage';
+const YOUTUBE_CHANNEL_URL = 'https://youtube.com/@vantar-holding?si=9E5GCxb8k5l5NFur';
+const INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/vantar_holding/profilecard/?igsh=MXFmdTFucGxlaXlxOA==';
 
 // Initialize coins
 function initCoins() {
