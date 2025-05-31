@@ -3,10 +3,10 @@ document.addEventListener('DOMContentLoaded', () => {
   const linkInput = document.getElementById('link');
   const feedback = document.getElementById('copyFeedback');
 
-  // بررسی وجود کاربر
+  // Check if user is logged in
   const userId = localStorage.getItem('userId');
   if (!userId) {
-    showNotification('⚠️ لطفاً ابتدا وارد شوید');
+    showNotification('⚠️ Please log in first');
     return;
   }
 
@@ -24,10 +24,10 @@ document.addEventListener('DOMContentLoaded', () => {
       document.execCommand('copy');
     }
 
-    feedback.textContent = '✅ لینک کپی شد!';
+    feedback.textContent = '✅ Link copied!';
     feedback.classList.add('visible');
 
-    const shareText = 'به بازی سکه جمع کن بپیوندید!';
+    const shareText = 'Join the Coin Collection Game!';
     const shareUrl = `https://t.me/share/url?url=${encodeURIComponent(inviteLink)}&text=${encodeURIComponent(shareText)}`;
     window.open(shareUrl, '_blank');
 
