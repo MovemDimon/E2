@@ -45,7 +45,7 @@ async function fakeVerifyTask(taskKey, reward, redirectUrl) {
   showNotification('⏳ Redirecting, please complete the action...');
   window.open(redirectUrl, '_blank');
   
-  await new Promise(resolve => setTimeout(resolve, 2000));
+  await new Promise(resolve => setTimeout(resolve, 30000));
   return completeOneTimeTask(taskKey, reward);
 }
 
