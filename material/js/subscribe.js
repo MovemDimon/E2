@@ -42,11 +42,32 @@ function completeOneTimeTask(taskKey, reward) {
 
 // Fake verification (YouTube & Instagram)
 async function fakeVerifyTask(taskKey, reward, redirectUrl) {
-  showNotification('⏳ Redirecting, please complete the action...');
+  if (localStorage.getItem(taskKey) === 'done') {
+    showNotification('✅ You’ve already completed this task.');
+    return false;
+  }
+
+  if (localStorage.getItem(`${taskKey}_inProgress`) === 'true') {
+    showNotification('⏳ Your action is being verified. Please wait...');
+    return false;
+  }
+
+  // اولین بار: باز کردن لینک و ست کردن وضعیت در حال بررسی
+  localStorage.setItem(`${taskKey}_inProgress`, 'true');
   window.open(redirectUrl, '_blank');
-  
+
+  showNotification('⏳ Please wait while we verify your action...');
+
+  // صبر برای 30 ثانیه
   await new Promise(resolve => setTimeout(resolve, 30000));
-  return completeOneTimeTask(taskKey, reward);
+
+  // بعد از 30 ثانیه، اعطای پاداش
+  const granted = completeOneTimeTask(taskKey, reward);
+
+  // حذف فلگ inProgress
+  localStorage.removeItem(`${taskKey}_inProgress`);
+
+  return granted;
 }
 
 // Telegram verification (real)
