@@ -1,4 +1,4 @@
-// ==== تنظیمات سیستم دعوت ====
+// ==== Invite System Configuration ====
 const TASK_CONFIG = {
   thresholds: {
     invite3: 3,
@@ -14,26 +14,26 @@ const TASK_CONFIG = {
   },
 };
 
-// ==== وضعیت محلی ====
+// ==== Local Status ====
 let invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
 
-// ==== به‌روزرسانی نمایش سکه‌ها ====
+// ==== Update Coin Display ====
 function updateCoinDisplay() {
   const coins = parseInt(localStorage.getItem('coins')) || 0;
   const coinDisplay = document.getElementById('coinCount');
   if (coinDisplay) coinDisplay.textContent = coins.toLocaleString('en-US');
 }
 
-// ==== تکمیل تسک دعوت ====
+// ==== Complete Invite Task ====
 async function completeTask(taskName) {
   const userId = localStorage.getItem('userId');
   if (!userId) {
-    showNotification('⚠️ لطفاً ابتدا وارد شوید');
+    showNotification('⚠️ Please log in first');
     return;
   }
 
   if (localStorage.getItem(taskName) === 'true') {
-    showNotification('⚠️ این جایزه قبلاً دریافت شده است');
+    showNotification('⚠️ You have already claimed this reward');
     return;
   }
 
@@ -42,7 +42,7 @@ async function completeTask(taskName) {
 
   if (invitedFriends < required) {
     const remaining = required - invitedFriends;
-    showNotification(`⚠️ برای دریافت جایزه باید ${remaining} دوست${remaining === 1 ? '' : 'ان'} دیگر دعوت کنید`);
+    showNotification(`⚠️ Invite ${remaining} more friend${remaining === 1 ? '' : 's'} to claim this reward`);
     return;
   }
 
@@ -55,15 +55,15 @@ async function completeTask(taskName) {
 
     const { valid } = await res.json();
     if (!valid) {
-      showNotification('⚠️ تأیید سرور انجام نشد');
+      showNotification('⚠️ Server verification failed');
       return;
     }
   } catch {
-    showNotification('❌ خطا در اتصال به سرور');
+    showNotification('❌ Error connecting to the server');
     return;
   }
 
-  // اعطای جایزه
+  // Grant reward
   let coins = parseInt(localStorage.getItem('coins')) || 0;
   coins += reward;
   localStorage.setItem('coins', coins);
@@ -71,12 +71,12 @@ async function completeTask(taskName) {
 
   updateCoinDisplay();
   updateInviteTaskStatus();
-  showNotification(`🎉 تبریک! ${reward.toLocaleString()} سکه دریافت کردید`);
+  showNotification(`🎉 Congratulations! You received ${reward.toLocaleString()} coins`);
 
   if (typeof syncWithServer === 'function') syncWithServer();
 }
 
-// ==== فقط غیرفعال‌سازی دکمه‌ها در صورت دریافت جایزه ====
+// ==== Disable Buttons Only If Reward Claimed ====
 function updateInviteTaskStatus() {
   ['invite3', 'invite5', 'invite10', 'invite20'].forEach(key => {
     const btnId = `claim${key.charAt(0).toUpperCase() + key.slice(1)}`;
@@ -84,19 +84,19 @@ function updateInviteTaskStatus() {
     if (btn) {
       const completed = localStorage.getItem(key) === 'true';
       btn.disabled = completed;
-      // ظاهر دکمه به هیچ عنوان تغییر نکند
+      // Button appearance must not change
     }
   });
 
   const status = document.getElementById('inviteTaskStatus');
   if (status) {
     status.textContent = invitedFriends >= 3
-      ? '✅ حداقل ۳ دوست دعوت کرده‌اید'
-      : `⚠️ ${3 - invitedFriends} دعوت دیگر برای دریافت جایزه`;
+      ? '✅ You have invited at least 3 friends'
+      : `⚠️ Invite ${3 - invitedFriends} more to unlock your reward`;
   }
 }
 
-// ==== راه‌اندازی اولیه ====
+// ==== Initial Setup ====
 document.addEventListener('DOMContentLoaded', () => {
   updateCoinDisplay();
   updateInviteTaskStatus();
