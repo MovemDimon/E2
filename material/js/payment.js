@@ -28,8 +28,17 @@ async function handlePayment(coins, usdPrice, btn) {
     window.open(deeplink, '_blank');
 
     // 2) دریافت مقادیر از window یا تعریف مستقیم
-    const wsUrl    = window.wsUrl    || 'wss://example.com/ws';   // TODO: Replace with actual URL
-    const wsApiKey = window.wsApiKey || 'your-api-key';           // TODO: Replace with actual key
+    const res = await fetch(`/api/ws-params?userId=${encodeURIComponent(userId)}`);
+    const data = await res.json();
+
+    if (!data.wsUrl) {
+      showNotification('❌ Failed to get WebSocket config');
+      btn.disabled = false;
+      btn.textContent = originalText;
+      return;
+    }
+
+    const ws = new WebSocket(data.wsUrl); 
 
     if (!wsUrl || !wsApiKey) {
       console.error('WebSocket config is missing!');
