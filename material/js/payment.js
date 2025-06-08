@@ -1,4 +1,4 @@
-// Base64 encode Unicode-safe 
+// تبدیل امن یونیکد به Base64
 function toBase64Unicode(str) {
   return btoa(
     encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) =>
@@ -8,61 +8,57 @@ function toBase64Unicode(str) {
 }
 
 async function handlePayment(coins, usdPrice, btn) {
-  btn.disabled = true;
   const originalText = btn.textContent;
+  btn.disabled = true;
   btn.textContent = '⏳ Processing...';
 
+  // تابع کمکی برای بازگرداندن دکمه به حالت اولیه
+  function resetBtn() {
+    btn.disabled = false;
+    btn.textContent = originalText;
+  }
+
   try {
-    const userId = localStorage.getItem('userId');
+    // گرفتن userId یا مقدار تستی در حالت محلی
+    let userId = localStorage.getItem('userId');
     if (!userId) {
-      showNotification('⚠️ User not found. Please log in first.');
-      btn.disabled = false;
-      btn.textContent = originalText;
-      return;
+      // حالت تستی: مقدار آزمایشی
+      userId = 'test-user';
+      showNotification('⚠️ [Test mode] No user ID found. Using test-user ID.');
     }
 
-    // 1) Deeplink برای پرداخت
+    // ساخت deeplink پرداخت
     const payload = { coins, usdPrice, userId };
     const encoded = toBase64Unicode(JSON.stringify(payload));
     const deeplink = `https://t.me/Daimonium_bot?start=pay_${encoded}`;
     window.open(deeplink, '_blank');
 
-    // 2) دریافت مقادیر از window یا تعریف مستقیم
-    const res = await fetch(`/api/ws-params?userId=${encodeURIComponent(userId)}`);
-    const data = await res.json();
-
-    if (!data.wsUrl) {
-      showNotification('❌ Failed to get WebSocket config');
-      btn.disabled = false;
-      btn.textContent = originalText;
-      return;
+    // فراخوانی API برای دریافت تنظیمات وب‌سوکت
+    let data;
+    try {
+      const res = await fetch(`/api/ws-params?userId=${encodeURIComponent(userId)}`);
+      data = await res.json();
+    } catch (fetchError) {
+      showNotification('❌ Could not connect to payment server.');
+      return resetBtn();
     }
 
-    const ws = new WebSocket(data.wsUrl); 
-
+    const { wsUrl, wsApiKey } = data || {};
     if (!wsUrl || !wsApiKey) {
-      console.error('WebSocket config is missing!');
-      showNotification('❌ Payment service is not configured.');
-      btn.disabled = false;
-      btn.textContent = originalText;
-      return;
+      showNotification('❌ Missing WebSocket configuration.');
+      return resetBtn();
     }
 
-    // 3) اتصال WebSocket
+    // اتصال به WebSocket
     const ws = new WebSocket(`${wsUrl}?userId=${encodeURIComponent(userId)}&api_key=${encodeURIComponent(wsApiKey)}`);
 
-    // 4) Timeout برای پاسخ
-    const WS_TIMEOUT = 30_000;
     const timeoutId = setTimeout(() => {
       ws.close();
       showNotification('❌ Payment timeout. Please try again.');
-    }, WS_TIMEOUT);
+    }, 30000);
 
     ws.addEventListener('open', () => {
-      ws.send(JSON.stringify({
-        action: 'confirm_payment',
-        data: payload
-      }));
+      ws.send(JSON.stringify({ action: 'confirm_payment', data: payload }));
     });
 
     ws.addEventListener('message', ({ data }) => {
@@ -71,22 +67,20 @@ async function handlePayment(coins, usdPrice, btn) {
       try {
         msg = JSON.parse(data);
       } catch {
-        console.error('Invalid WS message:', data);
+        console.error('Invalid message:', data);
         return;
       }
 
       if (msg.event === 'payment_result') {
         const { newBalance, error } = msg.data;
-
         if (newBalance != null) {
-          // ذخیره و نمایش موجودی جدید
           localStorage.setItem('coins', newBalance);
           const coinDisplay = document.getElementById('coinCount');
           if (coinDisplay) coinDisplay.textContent = newBalance.toLocaleString('en-US');
-
           if (typeof syncWithServer === 'function') syncWithServer();
+          showNotification('✅ Payment successful!');
         } else {
-          showNotification('❌ Payment error: ' + (error || 'Unknown'));
+          showNotification('❌ Payment failed: ' + (error || 'Unknown error.'));
         }
       }
 
@@ -95,20 +89,18 @@ async function handlePayment(coins, usdPrice, btn) {
 
     ws.addEventListener('error', (e) => {
       clearTimeout(timeoutId);
-      console.error('WS error:', e);
-      showNotification('❌ WebSocket error. Payment could not be confirmed.');
+      console.error('WebSocket error:', e);
+      showNotification('❌ WebSocket connection error.');
       ws.close();
     });
 
     ws.addEventListener('close', () => {
-      btn.disabled = false;
-      btn.textContent = originalText;
+      resetBtn();
     });
 
   } catch (err) {
-    console.error('Payment flow error:', err);
-    showNotification('❌ Error in payment process.');
-    btn.disabled = false;
-    btn.textContent = originalText;
+    console.error('Unexpected error:', err);
+    showNotification('❌ Unexpected error during payment process.');
+    resetBtn();
   }
 }
