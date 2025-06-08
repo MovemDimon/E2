@@ -1,11 +1,3 @@
-// fallback برای محیط تست
-if (typeof showNotification !== 'function') {
-  window.showNotification = function (msg) {
-    // استفاده از alert برای محیط تست
-    alert(msg);
-  };
-}
-
 document.addEventListener('DOMContentLoaded', () => {
   const copyButton = document.getElementById('copyButton');
   const linkInput = document.getElementById('link');
