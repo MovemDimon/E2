@@ -39,6 +39,19 @@ h1, h2, p {
   50%     { box-shadow: 0 0 20px rgba(255,107,107,0.8); }
 }
 
+.gold-card {
+  background: linear-gradient(135deg, #d4af37, #a67c00);
+  color: #fff;
+}
+.silver-card {
+  background: linear-gradient(135deg, #c0c0c0, #a9a9a9);
+  color: #fff;
+}
+.bronze-card {
+  background: linear-gradient(135deg, #cd7f32, #b87333);
+  color: #fff;
+}
+
 .bottom-nav {
     position: fixed;
     bottom: 0;
