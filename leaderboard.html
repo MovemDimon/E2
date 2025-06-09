@@ -29,89 +29,101 @@
         }
 
         .task-container {
-            margin: 10px auto;
-            max-width: 600px;
-        }
+    margin: 8px auto; /* جمع‌وجورتر از 10px */
+    max-width: 550px;  /* کمی کمتر از 600px */
+}
 
-        .task {
-            margin: 10px auto;
-            padding: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            border: 1px solid #000000;
-            border-radius: 12px;
-            background-color: #333030;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            transition: transform 0.3s ease;
-            width: 80%;
-        }
+.task {
+    margin: 8px auto;               /* قبلاً 10px */
+    padding: 14px 16px;             /* قبلاً 20px */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border: 1px solid #000000;
+    border-radius: 10px;            /* از 12px کمتر */
+    background-color: #333030;
+    box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15); /* سبک‌تر از قبل */
+    transition: transform 0.3s ease;
+    width: 90%;                     /* از 80% بیشتر، یعنی کارت باریک‌تر */
+}
 
-        .task:hover {
-            transform: translateY(-5px);
-        }
+.task:hover {
+    transform: translateY(-4px);    /* کمی کمتر از -5px */
+}
 
-        .task-detail {
-            display: flex;
-            align-items: center;
-        }
+.task-detail {
+    display: flex;
+    align-items: center;
+}
 
-        .task-image img {
-            border-radius: 8px;
-            margin-right: 10px;
-        }
+.task-image img {
+    width: 38px;                    /* کوچکتر از حالت قبلی */
+    border-radius: 6px;
+    margin-right: 8px;
+}
 
-        .task h4 {
-            margin: 0;
-            font-size: 18px;
-            color: #f2f2f2;
-        }
+.task h4 {
+    margin: 0;
+    font-size: 16px;                /* قبلاً 18px */
+    color: #f2f2f2;
+}
 
-        .task-data {
-            display: flex;
-            align-items: center;
-            margin-top: 8px;
-        }
+.task-data {
+    display: flex;
+    align-items: center;
+    margin-top: 6px;
+}
 
-        .task-data img {
-            margin-right: 5px;
-        }
+.task-data img {
+    width: 18px;                    /* اگر قبلاً بزرگ‌تر بوده */
+    margin-right: 4px;
+}
 
-        .task-data h5 {
-            margin: 0;
-            color: #ffcc00;
-            font-size: 18px;
-        }
+.task-data h5 {
+    margin: 0;
+    color: #ffcc00;
+    font-size: 16px;                /* قبلاً 18px */
+}
 
-        .task-button {
-            background-color: #ffffff;
-            color: rgb(0, 0, 0);
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: background-color 0.3s ease;
-        }
+.task-button {
+    background-color: #ffffff;
+    color: #000000;
+    border: none;
+    padding: 8px 16px;              /* قبلاً 10px 20px */
+    font-size: 14px;                /* قبلاً 16px */
+    cursor: pointer;
+    border-radius: 6px;
+    transition: background-color 0.3s ease;
+}
 
-        .task-button:hover {
-            background-color: #2dd60c;
-        }
+.task-button:hover {
+    background-color: #2dd60c;
+}
 
-        @media (max-width: 600px) {
-            .task-container {
-                max-width: 100%;
-            }
+@media (max-width: 600px) {
+    .task-container {
+        max-width: 100%;
+    }
 
-            .task-button {
-                padding: 10px 15px;
-                font-size: 14px;
-            }
+    .task {
+        width: 95%;
+        padding: 12px 14px;
+    }
 
-            .task h4 {
-                font-size: 16px;
-            }
-        }
+    .task-button {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+    .task h4 {
+        font-size: 14px;
+    }
+
+    .task-data h5 {
+        font-size: 14px;
+    }
+}
+
     </style>
 </head>
 
