@@ -39,51 +39,26 @@ h1, h2, p {
   50%     { box-shadow: 0 0 20px rgba(255,107,107,0.8); }
 }
 
-.rank-card {
-  background: #1c1c1f;
-  border-radius: 12px;
-  padding: 12px;
-  margin-bottom: 10px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-  transition: all 0.2s ease;
-  backdrop-filter: blur(3px);
-}
-
-.rank-card.gold {
+/* کارت نفر اول - طلایی کدر */
+.task-container.gold-card {
   background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(184, 134, 11, 0.12));
-  border: 1px solid rgba(212, 175, 55, 0.3);
+  border: 1px solid rgba(212, 175, 55, 0.25);
   color: #fff;
 }
 
-.rank-card.silver {
-  background: linear-gradient(135deg, rgba(192, 192, 192, 0.14), rgba(169, 169, 169, 0.11));
-  border: 1px solid rgba(192, 192, 192, 0.28);
+/* کارت نفر دوم - نقره‌ای کدر */
+.task-container.silver-card {
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.14), rgba(169, 169, 169, 0.011));
+  border: 1px solid rgba(192, 192, 192, 0.2);
   color: #fff;
 }
 
-.rank-card.bronze {
-  background: linear-gradient(135deg, rgba(205, 127, 50, 0.13), rgba(139, 90, 43, 0.1));
-  border: 1px solid rgba(205, 127, 50, 0.25);
+/* کارت نفر سوم - برنز کدر */
+.task-container.bronze-card {
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.13), rgba(139, 90, 43, 0.01));
+  border: 1px solid rgba(205, 127, 50, 0.2);
   color: #fff;
 }
-
-.rank-progress {
-  height: 6px;
-  border-radius: 3px;
-  background-color: rgba(255, 255, 255, 0.05);
-  overflow: hidden;
-  margin-top: 6px;
-}
-
-.rank-progress::after {
-  content: '';
-  display: block;
-  height: 100%;
-  background: linear-gradient(to right, #00ffcc, #0077ff);
-  width: var(--progress);
-  transition: width 0.3s ease;
-}
-
 
 .bottom-nav {
     position: fixed;
