@@ -412,61 +412,82 @@ h1, h2, p {
   animation: bubble 0.3s ease-out forwards;
 }
 
-/* ===== کامپوننت رنکینگ اختصاصی ===== */
-.rank-card {
-  background: #1c1c1f;
-  border-radius: 12px;
-  padding: 12px;
+/* ===== استایل‌های بخش رنکینگ ===== */
+#ranking-list .task-container {
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  border-radius: 24px;
+  border: 1px solid rgba(255,255,255,0.1);
+  box-shadow: var(--neumorphic-shadow);
   margin: 1rem auto;
   max-width: 600px;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.3);
-  transition: all 0.2s ease;
-  backdrop-filter: blur(3px);
+  transition: transform 0.4s var(--cubic-bezier), box-shadow 0.4s var(--cubic-bezier);
+}
+#ranking-list .task-container:hover {
+  box-shadow: 0 24px 48px -12px rgba(0,0,0,0.4);
 }
 
-.rank-card.gold {
-  background: linear-gradient(
-    135deg,
-    rgba(212,175,55,0.15),
-    rgba(184,134,11,0.12)
-  );
+#ranking-list .task {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem;
+  background-color: #333030;
+  border-radius: 12px;
+  box-shadow: var(--shadow-depth);
+}
+
+#ranking-list .task-detail h4 {
+  margin: 0;
+  font-size: 1.125rem;
+  color: #f2f2f2;
+}
+
+#ranking-list .task-data {
+  display: flex;
+  align-items: center;
+}
+
+#ranking-list .task-data img {
+  margin-right: 5px;
+}
+
+#ranking-list .task-data h5 {
+  margin: 0;
+  color: var(--accent-yellow);
+  font-size: 1.125rem;
+}
+
+/* کارت اول تا سوم رنگی */
+#ranking-list .task-container.gold-card {
+  background: linear-gradient(135deg, rgba(212,175,55,0.15), rgba(184,134,11,0.12));
   border: 1px solid rgba(212,175,55,0.3);
   color: #fff;
 }
 
-.rank-card.silver {
-  background: linear-gradient(
-    135deg,
-    rgba(192,192,192,0.14),
-    rgba(169,169,169,0.11)
-  );
+#ranking-list .task-container.silver-card {
+  background: linear-gradient(135deg, rgba(192,192,192,0.14), rgba(169,169,169,0.11));
   border: 1px solid rgba(192,192,192,0.28);
   color: #fff;
 }
 
-.rank-card.bronze {
-  background: linear-gradient(
-    135deg,
-    rgba(205,127,50,0.13),
-    rgba(139,90,43,0.1)
-  );
+#ranking-list .task-container.bronze-card {
+  background: linear-gradient(135deg, rgba(205,127,50,0.13), rgba(139,90,43,0.1));
   border: 1px solid rgba(205,127,50,0.25);
   color: #fff;
 }
 
-.rank-progress {
+/* پیشرفت اختصاصی در رتبه‌بندی */
+#ranking-list .progress-bar {
+  margin: 0.5rem 0 0;
+  width: 100%;
   height: 6px;
   border-radius: 3px;
   background-color: rgba(255,255,255,0.05);
   overflow: hidden;
-  margin-top: 6px;
 }
 
-.rank-progress::after {
-  content: '';
-  display: block;
-  height: 100%;
+#ranking-list .progress-bar::before {
   background: linear-gradient(to right, #00ffcc, #0077ff);
-  width: var(--progress);
-  transition: width 0.3s ease;
+  top: 0;
 }
