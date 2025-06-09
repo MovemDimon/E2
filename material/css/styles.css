@@ -46,20 +46,27 @@ h1, h2, p {
   margin-bottom: 10px;
   box-shadow: 0 4px 8px rgba(0,0,0,0.3);
   transition: all 0.2s ease;
+  backdrop-filter: blur(6px);
 }
 
+/* کارت نفر اول - طلایی کدر */
 .task-container.gold-card {
-  background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
+  background: linear-gradient(135deg, rgba(212, 175, 55, 0.12), rgba(184, 134, 11, 0.1));
+  border: 1px solid rgba(212, 175, 55, 0.25);
   color: #fff;
 }
 
+/* کارت نفر دوم - نقره‌ای کدر */
 .task-container.silver-card {
-  background: linear-gradient(135deg, #c0c0c0 0%, #a9a9a9 100%);
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(169, 169, 169, 0.08));
+  border: 1px solid rgba(192, 192, 192, 0.2);
   color: #fff;
 }
 
+/* کارت نفر سوم - برنز کدر */
 .task-container.bronze-card {
-  background: linear-gradient(135deg, #cd7f32 0%, #8b5a2b 100%);
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(139, 90, 43, 0.08));
+  border: 1px solid rgba(205, 127, 50, 0.2);
   color: #fff;
 }
 
