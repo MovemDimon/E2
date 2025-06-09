@@ -16,8 +16,7 @@
       height: 100vh;
       overflow: hidden;
       font-family: 'Vazirmatn', sans-serif;
-      background: var(--base-bg);
-      color: var(--base-fg);
+      background-color: var(--background-color, #121212);
       display: flex;
       flex-direction: column;
     }
@@ -32,14 +31,12 @@
 
     .frens-invite {
       width: 90%;
-      max-width: 500px;
-      background: var(--glass-bg);
-      backdrop-filter: blur(16px);
-      padding: 30px 20px;
-      border-radius: 24px;
-      box-shadow: var(--neumorphic-shadow);
-      text-align: center;
-      animation: fadeIn 0.6s ease-in-out;
+      max-width: 480px;
+      background-color: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 24px;
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+      backdrop-filter: blur(10px);
     }
 
     .frens-invite-button {
@@ -49,10 +46,10 @@
     }
 
     .frens-invite input {
-      background-color: #222;
-      color: var(--accent-yellow);
+      background-color: #1f1f1f;
+      color: var(--accent-yellow, #FFD700);
       font-size: 1rem;
-      padding: 0.75rem 1rem;
+      padding: 12px 16px;
       border: 1px solid #444;
       border-radius: 12px;
       text-align: center;
@@ -61,29 +58,12 @@
       outline: none;
     }
 
-    .copy-btn {
-      background: var(--gradient-primary);
-      color: #fff;
-      font-weight: bold;
-      border: none;
-      border-radius: 16px;
-      padding: 0.75rem;
-      font-size: 1rem;
-      cursor: pointer;
-      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.4);
-      transition: transform 0.3s ease, background-position 0.4s ease;
-    }
-
-    .copy-btn:hover {
-      transform: scale(1.05);
-      background-position: right center;
-    }
-
     .copy-feedback {
       font-size: 0.875rem;
       color: #4caf50;
       opacity: 0;
       transition: opacity 0.3s ease;
+      text-align: center;
     }
 
     .copy-feedback.visible {
@@ -101,7 +81,7 @@
       justify-content: space-around;
       align-items: center;
       border-top: 1px solid #333;
-      z-index: 999;
+      z-index: 1000;
     }
 
     .nav-item {
@@ -122,11 +102,6 @@
     .nav-item span {
       font-size: 11px;
     }
-
-    @keyframes fadeIn {
-      from { opacity: 0; transform: scale(0.9); }
-      to { opacity: 1; transform: scale(1); }
-    }
   </style>
 </head>
 <body>
@@ -135,7 +110,7 @@
     <div class="frens-invite">
       <div class="frens-invite-button">
         <input type="text" value="https://t.me/Daimonium_bot" id="link" readonly />
-        <button id="copyButton" class="copy-btn">Copy My Invite Link</button>
+        <button id="copyButton" class="task-button">Copy My Invite Link</button>
         <span id="copyFeedback" class="copy-feedback" aria-live="polite"></span>
       </div>
     </div>
