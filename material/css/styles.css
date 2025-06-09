@@ -48,17 +48,17 @@ h1, h2, p {
   transition: all 0.2s ease;
 }
 
-.gold-card {
+.task-container.gold-card {
   background: linear-gradient(135deg, #d4af37 0%, #b8860b 100%);
   color: #fff;
 }
 
-.silver-card {
+.task-container.silver-card {
   background: linear-gradient(135deg, #c0c0c0 0%, #a9a9a9 100%);
   color: #fff;
 }
 
-.bronze-card {
+.task-container.bronze-card {
   background: linear-gradient(135deg, #cd7f32 0%, #8b5a2b 100%);
   color: #fff;
 }
