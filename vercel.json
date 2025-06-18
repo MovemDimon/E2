@@ -3,18 +3,36 @@
   "builds": [
     { "src": "*.html", "use": "@vercel/static" },
     { "src": "material/**", "use": "@vercel/static" },
-    { "src": "backend/api/**/*.js", "use": "@vercel/node" },       
+    { "src": "backend/api/**/*.js", "use": "@vercel/node" },
     { "src": "backend/index.js", "use": "@vercel/node" }
   ],
   "rewrites": [
     { "source": "/", "destination": "/index.html" },
     { "source": "/home", "destination": "/home.html" },
     { "source": "/data/(.*)", "destination": "/backend/index.js" },
-    { "source": "/api/(.*)", "destination": "/backend/api/$1.js" }  
+    { "source": "/api/(.*)", "destination": "/backend/api/$1.js" }
   ],
   "headers": [
     {
-      "source": "/(.*)",
+      "source": "/(.*)\\.(js|css|png|jpg|jpeg|svg|webp|woff2|ttf|ico|html)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=604800, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/api/(.*)",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "no-store"
+        }
+      ]
+    },
+    {
+      "source": "/data/(.*)",
       "headers": [
         {
           "key": "Cache-Control",
