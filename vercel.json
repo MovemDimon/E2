@@ -5,20 +5,18 @@
     { "src": "material/**",         "use": "@vercel/static" },
     { "src": "backend/api/**/*.js", "use": "@vercel/node" }
   ],
-  "routes": [
-    { "src": "/",     "dest": "/index.html" },
-    { "src": "/home", "dest": "/home.html" },
-    { "src": "/data",     "methods": ["POST"], "dest": "/backend/api/data.js" },
-    { "src": "/api/(.*)", "dest": "/backend/api/$1.js" }
+  "rewrites": [
+    // صفحات استاتیک
+    { "source": "/",    "destination": "/index.html" },
+    { "source": "/home","destination": "/home.html" }, 
+    { "source": "/data",       "destination": "/backend/api/data.js" },
+    { "source": "/api/(.*)",   "destination": "/backend/api/$1.js" }
   ],
   "headers": [
     {
       "source": "/(.*)\\.(js|css|png|jpg|jpeg|svg|webp|woff2|ttf|ico|html)",
       "headers": [
-        {
-          "key": "Cache-Control",
-          "value": "public, max-age=604800, immutable"
-        }
+        { "key": "Cache-Control", "value": "public, max-age=604800, immutable" }
       ]
     },
     {
