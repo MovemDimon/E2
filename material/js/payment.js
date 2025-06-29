@@ -1,3 +1,5 @@
+// payment.js (Vercel)
+
 // تبدیل امن یونیکد به Base64
 function toBase64Unicode(str) {
   return btoa(
@@ -22,7 +24,6 @@ async function handlePayment(coins, usdPrice, btn) {
     // گرفتن userId یا مقدار تستی در حالت محلی
     let userId = localStorage.getItem('userId');
     if (!userId) {
-      // حالت تستی: مقدار آزمایشی
       userId = 'test-user';
       showNotification('⚠️ [Test mode] No user ID found. Using test-user ID.');
     }
@@ -37,24 +38,27 @@ async function handlePayment(coins, usdPrice, btn) {
     let data;
     try {
       const res = await fetch(`/api/ws-params?userId=${encodeURIComponent(userId)}`);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
       data = await res.json();
     } catch (fetchError) {
       showNotification('❌ Could not connect to payment server.');
-      return resetBtn();
+      resetBtn();
+      return;
     }
 
-    const { wsUrl, wsApiKey } = data || {};
+    const { wsUrl, wsApiKey } = data;
     if (!wsUrl || !wsApiKey) {
       showNotification('❌ Missing WebSocket configuration.');
-      return resetBtn();
+      resetBtn();
+      return;
     }
 
     // اتصال به WebSocket
     const ws = new WebSocket(`${wsUrl}?userId=${encodeURIComponent(userId)}&api_key=${encodeURIComponent(wsApiKey)}`);
 
     const timeoutId = setTimeout(() => {
-      ws.close();
       showNotification('❌ Payment timeout. Please try again.');
+      ws.close();
     }, 30000);
 
     ws.addEventListener('open', () => {
