@@ -1,5 +1,3 @@
-// payment.js (Vercel)
-
 // تبدیل امن یونیکد به Base64
 function toBase64Unicode(str) {
   return btoa(
