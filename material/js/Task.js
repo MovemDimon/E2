@@ -1,4 +1,4 @@
-// ==== Invite System Configuration ====
+// ==== Invite System ====
 const TASK_CONFIG = {
   thresholds: {
     invite3: 3,
