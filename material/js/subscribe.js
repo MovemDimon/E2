@@ -1,13 +1,6 @@
-// ░█████╗░░█████╗░██╗███╗░░██╗███████╗
-// ██╔══██╗██╔══██╗██║████╗░██║██╔════╝
-// ██║░░╚═╝██║░░██║██║██╔██╗██║█████╗░░
-// ██║░░██╗██║░░██║██║██║╚████║██╔══╝░░
-// ╚█████╔╝╚█████╔╝██║██║░╚███║███████╗
-// ░╚════╝░░╚════╝░╚═╝╚═╝░░╚══╝╚══════╝
-
 // Constants
-const YOUTUBE_CHANNEL_URL = 'https://youtube.com/@vantar-holding?si=9E5GCxb8k5l5NFur';
-const INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/vantar_holding/profilecard/?igsh=MXFmdTFucGxlaXlxOA==';
+const YOUTUBE_CHANNEL_URL = 'https://www.youtube.com/@vantar-holding';
+const INSTAGRAM_PROFILE_URL = 'https://www.instagram.com/vantar_holding/';
 
 // Initialize coins
 function initCoins() {
@@ -52,28 +45,20 @@ async function fakeVerifyTask(taskKey, reward, redirectUrl) {
     return false;
   }
 
-  // اولین بار: باز کردن لینک و ست کردن وضعیت در حال بررسی
   localStorage.setItem(`${taskKey}_inProgress`, 'true');
   window.open(redirectUrl, '_blank');
 
   showNotification('⏳ Please wait while we verify your action...');
-
-  // صبر برای 30 ثانیه
   await new Promise(resolve => setTimeout(resolve, 30000));
 
-  // بعد از 30 ثانیه، اعطای پاداش
   const granted = completeOneTimeTask(taskKey, reward);
-
-  // حذف فلگ inProgress
   localStorage.removeItem(`${taskKey}_inProgress`);
-
   return granted;
 }
 
 // Telegram verification (real)
 async function verifyTelegramSubscribe() {
   const userId = localStorage.getItem('telegramUserId');
-  
   if (!userId) {
     showNotification('⚠️ Please log in with Telegram first.');
     return false;
@@ -120,20 +105,19 @@ async function onInstagramFollowClick() {
 // Initialize when page loads
 document.addEventListener('DOMContentLoaded', () => {
   initCoins();
-  
-  // Attach event listeners to buttons
+
   const btnTelegram = document.getElementById('btnTelegram');
   const btnYouTube = document.getElementById('btnYouTube');
   const btnInstagram = document.getElementById('btnInstagram');
-  
+
   if (btnTelegram) {
     btnTelegram.addEventListener('click', onTelegramSubscribeClick);
   }
-  
+
   if (btnYouTube) {
     btnYouTube.addEventListener('click', onYouTubeSubscribeClick);
   }
-  
+
   if (btnInstagram) {
     btnInstagram.addEventListener('click', onInstagramFollowClick);
   }
