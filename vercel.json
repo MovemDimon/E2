@@ -6,7 +6,6 @@
     { "src": "backend/api/**/*.js", "use": "@vercel/node" }
   ],
   "rewrites": [
-    // صفحات استاتیک
     { "source": "/",    "destination": "/index.html" },
     { "source": "/home","destination": "/home.html" }, 
     { "source": "/data",       "destination": "/backend/api/data.js" },
