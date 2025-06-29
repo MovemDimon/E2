@@ -1,4 +1,4 @@
-// ========== Initialization ==========
+// material/js/main.js
 const body = document.body;
 const coinEl = document.getElementById('coin');
 const countEl = document.getElementById('coinCount');
@@ -23,6 +23,7 @@ function incrementInviteCount(inviterId) {
   let invited = parseInt(localStorage.getItem('invitedFriends')) || 0;
   invited++;
   localStorage.setItem('invitedFriends', invited);
+  // به‌روزرسانی متغیر محلی
   if (typeof updateInviteTaskStatus === 'function') updateInviteTaskStatus();
 }
 
@@ -57,7 +58,9 @@ function updatePowerProgress() {
   const power = +localStorage.getItem('power');
   const total = +localStorage.getItem('total');
   const progressEl = document.querySelector('.progress');
-  if (progressEl) progressEl.style.width = `${(100 * power / total)}%`;
+  if (progressEl) {
+    progressEl.style.width = `${(100 * power / total)}%`;
+  }
 }
 
 // Coin click
@@ -106,10 +109,10 @@ async function syncWithServer() {
     userId,
     invitedBy: localStorage.getItem('invitedBy') || null,
     invitedFriends: +localStorage.getItem('invitedFriends') || 0,
-    coins: localStorage.getItem('coins'),
-    total: localStorage.getItem('total'),
-    power: localStorage.getItem('power'),
-    count: localStorage.getItem('count'),
+    coins: +localStorage.getItem('coins'),
+    total: +localStorage.getItem('total'),
+    power: +localStorage.getItem('power'),
+    count: +localStorage.getItem('count'),
     tasks: {
       invite3: localStorage.getItem('invite3'),
       invite5: localStorage.getItem('invite5'),
@@ -131,7 +134,7 @@ async function syncWithServer() {
     localStorage.setItem('lastSyncDate', new Date().toISOString());
   } catch (e) {
     console.error('Sync Error:', e);
-    showNotification('⚠️ خطا در همگام‌سازی با سرور');
+    showNotification('⚠️ Error syncing with server');
   }
 }
 
