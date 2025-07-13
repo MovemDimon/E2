@@ -1,4 +1,4 @@
-// ==== Invite System ====
+// ==== Invite System Configuration ====
 const TASK_CONFIG = {
   thresholds: {
     invite3: 3,
@@ -39,7 +39,6 @@ async function completeTask(taskName) {
 
   const required = TASK_CONFIG.thresholds[taskName];
   const reward = TASK_CONFIG.rewards[taskName];
-  invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
 
   if (invitedFriends < required) {
     const remaining = required - invitedFriends;
@@ -47,34 +46,12 @@ async function completeTask(taskName) {
     return;
   }
 
-  try {
-    const res = await fetch('/verify-invites', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ task: taskName, userId }),
-    });
-
-    if (!res.ok) {
-      showNotification('⚠️ Server verification failed');
-      return;
-    }
-    const { valid } = await res.json();
-    if (!valid) {
-      showNotification('⚠️ Server verification failed');
-      return;
-    }
-  } catch {
-    showNotification('❌ Error connecting to the server');
-    return;
-  }
-
-  // Grant reward
+  // بررسی فقط از localStorage است، بدون تماس با سرور
   let coins = parseInt(localStorage.getItem('coins')) || 0;
   coins += reward;
   localStorage.setItem('coins', coins);
   localStorage.setItem(taskName, 'true');
 
-  invitedFriends = parseInt(localStorage.getItem('invitedFriends')) || 0;
   updateCoinDisplay();
   updateInviteTaskStatus();
   showNotification(`🎉 Congratulations! You received ${reward.toLocaleString()} coins`);
@@ -95,10 +72,9 @@ function updateInviteTaskStatus() {
 
   const status = document.getElementById('inviteTaskStatus');
   if (status) {
-    const remaining = Math.max(0, 3 - invitedFriends);
     status.textContent = invitedFriends >= 3
       ? '✅ You have invited at least 3 friends'
-      : `⚠️ Invite ${remaining} more to unlock your reward`;
+      : `⚠️ Invite ${3 - invitedFriends} more to unlock your reward`;
   }
 }
 
