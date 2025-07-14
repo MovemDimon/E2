@@ -1,4 +1,4 @@
-// تبدیل امن یونیکد به Base64
+// تبدیل امن یونیکد به Base64 
 function toBase64Unicode(str) {
   return btoa(
     encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) =>
@@ -12,27 +12,43 @@ async function handlePayment(coins, usdPrice, btn) {
   btn.disabled = true;
   btn.textContent = '⏳ Processing...';
 
-  // تابع کمکی برای بازگرداندن دکمه به حالت اولیه
   function resetBtn() {
     btn.disabled = false;
     btn.textContent = originalText;
   }
 
   try {
-    // گرفتن userId یا مقدار تستی در حالت محلی
     let userId = localStorage.getItem('userId');
     if (!userId) {
       userId = 'test-user';
       showNotification('⚠️ [Test mode] No user ID found. Using test-user ID.');
     }
 
-    // ساخت deeplink پرداخت
-    const payload = { coins, usdPrice, userId };
-    const encoded = toBase64Unicode(JSON.stringify(payload));
+    // ساخت payload برای فرستادن به bot
+    const payloadForLink = { coins, usdPrice, userId };
+    const encoded = toBase64Unicode(JSON.stringify(payloadForLink));
     const deeplink = `https://t.me/Daimonium_bot?start=pay_${encoded}`;
+
+    // قبل از باز کردن ربات، به worker اطلاع بده که بات آماده ارسال پیام بشه
+    try {
+      await fetch('https://your-worker-domain.com/telegram-webhook', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          message: {
+            chat: { id: userId },
+            text: '/start pay_' + encoded
+          }
+        })
+      });
+    } catch (botErr) {
+      console.warn('Bot init error:', botErr);
+    }
+
+    // باز کردن دیپ لینک به چت بات
     window.open(deeplink, '_blank');
 
-    // فراخوانی API برای دریافت تنظیمات وب‌سوکت
+    // دریافت تنظیمات WebSocket از سرور
     let data;
     try {
       const res = await fetch(`/api/ws-params?userId=${encodeURIComponent(userId)}`);
@@ -51,36 +67,61 @@ async function handlePayment(coins, usdPrice, btn) {
       return;
     }
 
-    // اتصال به WebSocket
+    // اتصال WebSocket
     const ws = new WebSocket(`${wsUrl}?userId=${encodeURIComponent(userId)}&api_key=${encodeURIComponent(wsApiKey)}`);
-
     const timeoutId = setTimeout(() => {
       showNotification('❌ Payment timeout. Please try again.');
       ws.close();
     }, 30000);
 
     ws.addEventListener('open', () => {
-      ws.send(JSON.stringify({ action: 'confirm_payment', data: payload }));
+      ws.send(JSON.stringify({ action: 'confirm_payment', data: payloadForLink }));
     });
 
-    ws.addEventListener('message', ({ data }) => {
+    ws.addEventListener('message', async ({ data: msgData }) => {
       clearTimeout(timeoutId);
       let msg;
       try {
-        msg = JSON.parse(data);
+        msg = JSON.parse(msgData);
       } catch {
-        console.error('Invalid message:', data);
+        console.error('Invalid message:', msgData);
+        ws.close();
         return;
       }
 
       if (msg.event === 'payment_result') {
         const { newBalance, error } = msg.data;
+
         if (newBalance != null) {
+          // به‌روز رسانی لوکال
           localStorage.setItem('coins', newBalance);
           const coinDisplay = document.getElementById('coinCount');
           if (coinDisplay) coinDisplay.textContent = newBalance.toLocaleString('en-US');
-          if (typeof syncWithServer === 'function') syncWithServer();
           showNotification('✅ Payment successful!');
+
+          // ارسال به سرور
+          const paymentPayload = {
+            type: 'payment',
+            userId,
+            coins: newBalance,
+            usdPrice,
+            status: 'success',
+            errorMsg: '',
+            timestamp: new Date().toISOString()
+          };
+
+          try {
+            await fetch('https://vercel-app-108-6bhs.vercel.app/data', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${localStorage.getItem('authToken') || ''}`
+              },
+              body: JSON.stringify(paymentPayload)
+            });
+          } catch (syncErr) {
+            console.error('Error syncing payment:', syncErr);
+          }
         } else {
           showNotification('❌ Payment failed: ' + (error || 'Unknown error.'));
         }
