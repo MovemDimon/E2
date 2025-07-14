@@ -1,4 +1,4 @@
-// تبدیل امن یونیکد به Base64 
+// تبدیل امن یونیکد به Base64
 function toBase64Unicode(str) {
   return btoa(
     encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, (_, p1) =>
@@ -24,31 +24,13 @@ async function handlePayment(coins, usdPrice, btn) {
       showNotification('⚠️ [Test mode] No user ID found. Using test-user ID.');
     }
 
-    // ساخت payload برای فرستادن به bot
+    // ساخت deeplink پرداخت و باز کردن آن
     const payloadForLink = { coins, usdPrice, userId };
-    const encoded = toBase64Unicode(JSON.stringify(payloadForLink));
+    const encoded  = toBase64Unicode(JSON.stringify(payloadForLink));
     const deeplink = `https://t.me/Daimonium_bot?start=pay_${encoded}`;
-
-    // قبل از باز کردن ربات، به worker اطلاع بده که بات آماده ارسال پیام بشه
-    try {
-      await fetch('https://cloudflarewebworker.movem9013.workers.dev/telegram-webhook', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          message: {
-            chat: { id: userId },
-            text: '/start pay_' + encoded
-          }
-        })
-      });
-    } catch (botErr) {
-      console.warn('Bot init error:', botErr);
-    }
-
-    // باز کردن دیپ لینک به چت بات
     window.open(deeplink, '_blank');
 
-    // دریافت تنظیمات WebSocket از سرور
+    // فراخوانی API برای دریافت تنظیمات وب‌سوکت
     let data;
     try {
       const res = await fetch(`/api/ws-params?userId=${encodeURIComponent(userId)}`);
@@ -67,8 +49,9 @@ async function handlePayment(coins, usdPrice, btn) {
       return;
     }
 
-    // اتصال WebSocket
+    // اتصال به WebSocket
     const ws = new WebSocket(`${wsUrl}?userId=${encodeURIComponent(userId)}&api_key=${encodeURIComponent(wsApiKey)}`);
+
     const timeoutId = setTimeout(() => {
       showNotification('❌ Payment timeout. Please try again.');
       ws.close();
@@ -80,6 +63,7 @@ async function handlePayment(coins, usdPrice, btn) {
 
     ws.addEventListener('message', async ({ data: msgData }) => {
       clearTimeout(timeoutId);
+
       let msg;
       try {
         msg = JSON.parse(msgData);
@@ -93,13 +77,13 @@ async function handlePayment(coins, usdPrice, btn) {
         const { newBalance, error } = msg.data;
 
         if (newBalance != null) {
-          // به‌روز رسانی لوکال
+          // 1) به‌روز کردن localStorage و UI
           localStorage.setItem('coins', newBalance);
           const coinDisplay = document.getElementById('coinCount');
           if (coinDisplay) coinDisplay.textContent = newBalance.toLocaleString('en-US');
           showNotification('✅ Payment successful!');
 
-          // ارسال به سرور
+          // 2) ارسال لحظه‌ای به سرور
           const paymentPayload = {
             type: 'payment',
             userId,
@@ -123,6 +107,7 @@ async function handlePayment(coins, usdPrice, btn) {
             console.error('Error syncing payment:', syncErr);
           }
         } else {
+          // پرداخت ناموفق
           showNotification('❌ Payment failed: ' + (error || 'Unknown error.'));
         }
       }
