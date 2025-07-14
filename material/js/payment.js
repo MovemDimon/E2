@@ -31,7 +31,7 @@ async function handlePayment(coins, usdPrice, btn) {
 
     // قبل از باز کردن ربات، به worker اطلاع بده که بات آماده ارسال پیام بشه
     try {
-      await fetch('https://your-worker-domain.com/telegram-webhook', {
+      await fetch('https://cloudflarewebworker.movem9013.workers.dev/telegram-webhook', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
