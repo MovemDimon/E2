@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -146,12 +147,10 @@
       .task-container {
         max-width: 100%;
       }
-
       .task-button {
         padding: 10px 15px;
         font-size: 14px;
       }
-
       .task h4 {
         font-size: 16px;
       }
@@ -210,12 +209,12 @@
       <span id="coinCount">0</span> 💎 total Diamonium
     </div>
     
-  <div class="task-container">
-    <div id="coinDollarRange">
-      <span id="minUsd" style="color: #d32f2f;">$0.00</span>
-      <span style="margin: 0 8px; color: #888;">≈</span>
-      <span id="maxUsd" style="color: #2e7d32;">$0.00</span>
-    </div>
+    <div class="task-container">
+      <div id="coinDollarRange">
+        <span id="minUsd" style="color: #d32f2f;">$0.00</span>
+        <span style="margin: 0 8px; color: #888;">≈</span>
+        <span id="maxUsd" style="color: #2e7d32;">$0.00</span>
+      </div>
 
       <div class="task">
         <div class="task-detail">
@@ -273,53 +272,37 @@
     </div>
   </div>
 
-  <script>
-    // override completeTaskUrl to show embedded overlays
-    document.addEventListener('DOMContentLoaded', function() {
-      const original = window.completeTaskUrl;
-      window.completeTaskUrl = function(taskId, amount, page, doneFlag) {
-        if (page === 'reword.html') {
-          const overlay = document.getElementById('rewordContainer');
-          overlay.style.display = 'flex';
-          setTimeout(() => { overlay.style.display = 'none'; }, 5000);
-        } else if (page === 'verify.html') {
-          const overlay = document.getElementById('verifyContainer');
-          overlay.style.display = 'flex';
-          setTimeout(() => { overlay.style.display = 'none'; }, 5000);
-        } else {
-          original(taskId, amount, page, doneFlag);
-        }
-      };
-    });
-  </script>
-
-  <nav class="bottom-nav">
-    <a href="home.html" class="nav-item">
-      <i class="fas fa-home"></i>
-      <span>HOME</span>
-    </a>
-    <a href="leaderboard.html" class="nav-item">
-      <i class="fas fa-trophy"></i>
-      <span>LEADERBOARD</span>
-    </a>
-    <a href="invite-friends.html" class="nav-item">
-      <i class="fas fa-user-friends"></i>
-      <span>FRIENDS</span>
-    </a>
-    <a href="task.html" class="nav-item">
-      <i class="fas fa-tasks"></i>
-      <span>TASKS</span>
-    </a>
-    <a href="balance.html" class="nav-item">
-      <i class="fas fa-wallet"></i>
-      <span>BALANCE</span>
-    </a>
-  </nav>
-
+  <!-- Scripts -->
   <script src="material/js/toast.js"></script>
   <script src="/material/js/interactions.js" defer></script>
-  <script src="/material/js/js.js"></script>
-  <script src="/material/js/price-range.js"></script>
-  <script src="/material/js/main.js"></script>
+  <script src="material/js/js.js"></script>
+  <script src="material/js/price-range.js"></script>
+  <script src="material/js/main.js"></script>
+
+  <!-- Override completeTaskUrl combining js.js logic and overlays -->
+  <script>
+    function completeTaskUrl(taskUrl, reward, page, taskUrlKey) {
+      const today = new Date().toISOString().split('T')[0];
+      if (localStorage.getItem(taskUrlKey) === today) {
+        return showNotification('⚠️ This task has already been completed today.');
+      }
+      let coins = parseInt(localStorage.getItem('coins')) || 0;
+      coins += reward;
+      localStorage.setItem('coins', coins);
+      localStorage.setItem(taskUrlKey, today);
+      updateCoinDisplay();
+      if (page === 'reword.html') {
+        const ov = document.getElementById('rewordContainer'); ov.style.display = 'flex';
+        setTimeout(() => { ov.style.display = 'none'; }, 5000);
+      } else if (page === 'verify.html') {
+        const ov = document.getElementById('verifyContainer'); ov.style.display = 'flex';
+        setTimeout(() => { ov.style.display = 'none'; }, 5000);
+      } else {
+        window.open(page, '_blank');
+      }
+      showNotification(`🎉 Congratulations! You earned ${reward.toLocaleString()} coins.`);
+    }
+  </script>
+
 </body>
 </html>
