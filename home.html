@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" /> 
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Complete Tasks</title>
 
   <link rel="stylesheet" href="background.css" />
@@ -156,6 +156,46 @@
         font-size: 16px;
       }
     }
+
+    /* Overlay styles for embedded pages */
+    .overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: black;
+      display: none;
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .overlay .loading-container {
+      text-align: center;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .overlay .loading-container h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    .overlay .spinner {
+      border: 8px solid rgba(255, 255, 255, 0.1);
+      border-left: 8px solid #013AEB;
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 0 auto;
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
   </style>
 
   <script src="background.js" defer></script>
@@ -164,6 +204,7 @@
 <body>
   <main>
     <div style="height: 72px; width: 100%; background: transparent;"></div>
+
     <div id="balance-container">
       <h2><b></b></h2>
       <span id="coinCount">0</span> 💎 total Diamonium
@@ -215,6 +256,42 @@
 
     <div class="bottom-padding"></div>
   </main>
+
+  <!-- Embedded reword.html -->
+  <div id="rewordContainer" class="overlay">
+    <div class="loading-container">
+      <h1>Adding...</h1>
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <!-- Embedded verify.html -->
+  <div id="verifyContainer" class="overlay">
+    <div class="loading-container">
+      <h1>Checking...</h1>
+      <div class="spinner"></div>
+    </div>
+  </div>
+
+  <script>
+    // override completeTaskUrl to show embedded overlays
+    document.addEventListener('DOMContentLoaded', function() {
+      const original = window.completeTaskUrl;
+      window.completeTaskUrl = function(taskId, amount, page, doneFlag) {
+        if (page === 'reword.html') {
+          const overlay = document.getElementById('rewordContainer');
+          overlay.style.display = 'flex';
+          setTimeout(() => { overlay.style.display = 'none'; }, 5000);
+        } else if (page === 'verify.html') {
+          const overlay = document.getElementById('verifyContainer');
+          overlay.style.display = 'flex';
+          setTimeout(() => { overlay.style.display = 'none'; }, 5000);
+        } else {
+          original(taskId, amount, page, doneFlag);
+        }
+      };
+    });
+  </script>
 
   <nav class="bottom-nav">
     <a href="home.html" class="nav-item">
