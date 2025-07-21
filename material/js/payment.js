@@ -68,7 +68,7 @@ async function handlePayment(coins, usdPrice, btn) {
 
 
 
-        // ارسال به سرور بک‌اند جداگانه
+        // ارسال به سرور 
 
         try {
 
