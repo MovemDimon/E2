@@ -36,7 +36,7 @@ async function handlePayment(coins, usdPrice, btn) {
 
     const paymentUrl = `/detail.html?coins=${encodeURIComponent(coins)}&usdPrice=${encodeURIComponent(usdPrice)}`;
 
-    window.open(paymentUrl, '_blank');
+    window.location.href = paymentUrl;
 
 
 
@@ -68,7 +68,7 @@ async function handlePayment(coins, usdPrice, btn) {
 
 
 
-        // ارسال به سرور 
+        // ارسال به سرور بک‌اند جداگانه
 
         try {
 
