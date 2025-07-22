@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>  
 <html lang="en">
 
 <head>
@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Loading...</title>
 
-  <!-- CSS files -->
+  <!-- CSS files (with placeholder, will be updated dynamically) -->
   <link rel="stylesheet" href="/material/css/font.css">
   <link rel="stylesheet" href="/material/css/st.css">
   <link rel="stylesheet" href="/material/css/styles.css">
@@ -26,11 +26,11 @@
     }
 
     .spinner {
-      border: 8px solid rgba(255, 255, 255, 0.1);
-      border-left: 8px solid #013AEB;
+      border: 10px solid rgba(255, 255, 255, 0.1);
+      border-left: 10px solid #013AEB;
       border-radius: 50%;
-      width: 50px;
-      height: 50px;
+      width: 60px;
+      height: 60px;
       animation: spin 1s linear infinite;
     }
 
@@ -40,38 +40,68 @@
     }
   </style>
 
-<script src="https://telegram.org/js/telegram-web-app.js"></script>
-<script>
-  window.addEventListener("DOMContentLoaded", () => {
-    Telegram.WebApp.ready();
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
 
-    const tryRedirect = () => {
-      const user = Telegram.WebApp.initDataUnsafe?.user;
-      if (user && user.id) {
-        localStorage.setItem('userId', user.id);
-        console.log('✅ Telegram User ID stored:', user.id);
-        window.location.href = 'home.html';
-      } else {
-        console.warn('⚠️ No user data yet, retrying...');
-        setTimeout(tryRedirect, 100); // retry after short delay
-      }
-    };
+  <!-- ✅ ضد کش: افزودن version به JS/CSS -->
+  <script>
+    (function () {
+      const version = Date.now();
 
-    tryRedirect();
-  });
-</script>
+      // نسخه برای <link rel="stylesheet">
+      document.querySelectorAll('link[rel="stylesheet"][href]').forEach(link => {
+        let href = link.getAttribute('href');
+        if (!href.includes('?')) {
+          link.setAttribute('href', `${href}?v=${version}`);
+        } else {
+          link.setAttribute('href', `${href}&v=${version}`);
+        }
+      });
 
+      // نسخه برای <script src="...">
+      window.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('script[src]').forEach(script => {
+          const src = script.getAttribute('src');
+          if (src.includes('telegram-web-app.js')) return; // این یکی کش نزن
+          if (!src.includes('?')) {
+            script.setAttribute('src', `${src}?v=${version}`);
+          } else {
+            script.setAttribute('src', `${src}&v=${version}`);
+          }
+        });
+      });
+    })();
+  </script>
+</head>
 
 <body>
   <div class="spinner"></div>
 
-  <!-- JavaScript files -->
+  <!-- JavaScript files (version توسط اسکریپت اضافه می‌شود) -->
   <script src="/material/js/cojs.js"></script>
   <script src="/material/js/js.js"></script>
   <script src="/material/js/main.js"></script>
   <script src="/material/js/payment.js"></script>
   <script src="/material/js/Task.js"></script>
   <script src="/material/js/w.js"></script>
-</body>
 
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      Telegram.WebApp.ready();
+
+      const tryRedirect = () => {
+        const user = Telegram.WebApp.initDataUnsafe?.user;
+        if (user && user.id) {
+          localStorage.setItem('userId', user.id);
+          console.log('✅ Telegram User ID stored:', user.id);
+          window.location.href = 'home.html';
+        } else {
+          console.warn('⚠️ No user data yet, retrying...');
+          setTimeout(tryRedirect, 100); // retry after short delay
+        }
+      };
+
+      tryRedirect();
+    });
+  </script>
+</body>
 </html>
