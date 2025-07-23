@@ -1,11 +1,12 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Loading...</title>
 
-  <!-- CSS files -->
+  <!-- CSS Files -->
   <link rel="stylesheet" href="/material/css/font.css?v=1">
   <link rel="stylesheet" href="/material/css/st.css?v=1">
   <link rel="stylesheet" href="/material/css/styles.css?v=1">
@@ -46,6 +47,7 @@
       Telegram.WebApp.ready();
 
       const version = Date.now(); // برای ضد کش
+
       const pages = {
         home: `home.html?v=${version}`,
         balance: `balance.html?v=${version}`,
@@ -62,7 +64,7 @@
           localStorage.setItem('userId', user.id);
           console.log('✅ Telegram User ID stored:', user.id);
 
-          // صفحه اصلی به home هدایت میشه (میتونی تغییرش بدی)
+          // انتقال به home.html با نسخه جدید
           window.location.href = pages.home;
         } else {
           console.warn('⚠️ No user data yet, retrying...');
@@ -86,4 +88,5 @@
   <script src="/material/js/Task.js?v=1"></script>
   <script src="/material/js/w.js?v=1"></script>
 </body>
+
 </html>
