@@ -151,7 +151,7 @@ h1, h2, p {
   align-items: center;
   justify-content: space-between;
   padding: 1rem;
-  background-color: #333030;
+  background-color: #0D0D0D;
   border-radius: 12px;
   box-shadow: var(--shadow-depth);
 }
@@ -460,3 +460,4 @@ h1, h2, p {
 /* پنهان */
 
 .hidden { display: none; }
+
